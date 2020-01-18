@@ -1,0 +1,83 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              01/16/2020 00:12:21 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\main.OBJ
+COMPILER INVOKED BY: Z:\home\vyldram\SimplicityStudio_v4\developer\toolchains\keil_8051\9.60\BIN\C51.exe /home/vyldram/G
+                    -it/C8051C340/C8051F340_Clock/main.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SP
+                    -EED) INTVECTOR(0X0000) INTPROMOTE INCDIR(/home/vyldram/SimplicityStudio_v4/developer/Device/C8051F340/inc;/home/vyldram/
+                    -SimplicityStudio_v4/developer/Device/shared/si8051Base) PRINT(.\main.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\ma
+                    -in.OBJ)
+
+line level    source
+
+   1          /*
+   2           * main.c
+   3           *
+   4           *  Created on: 15/01/2020
+   5           *      Author: vyldram
+   6           */
+   7          
+   8          #include <c8051F340.h>
+   9          #include <si_toolchain.h>
+  10          #include <INTRINS.H>
+  11          
+  12          void OSCILLATOR_Init (void);
+  13          
+  14          
+  15          
+  16          
+  17          void main (void)
+  18          {
+  19   1              PCA0MD &= ~0x40;                    // WDTE = 0 (clear watchdog timer enable)
+  20   1      
+  21   1              OSCILLATOR_Init ();                 // Initialize Oscillator
+  22   1      
+  23   1      
+  24   1              while (1)
+  25   1              {
+  26   2              }
+  27   1      }
+  28          
+  29          
+  30          
+  31          void OSCILLATOR_Init (void)
+  32          {
+  33   1              unsigned short i=0;
+  34   1              OSCICN |= 0x03;                     // Configure internal oscillator for
+  35   1                                             // its maximum frequency (12 Mhz)
+  36   1      
+  37   1              CLKMUL =0;                                                      //activate oscillator multiplier
+  38   1              CLKMUL |= 0x80;
+  39   1              for (i=0; i<50000; i++);
+  40   1              CLKMUL|=0xC0;
+  41   1              while((CLKMUL & 0x20) == 0);
+  42   1      
+  43   1              CLKSEL&=~0x7;                                           //set x4 multiplier source
+  44   1              CLKSEL|=3;
+  45   1      
+  46   1              P0MDOUT |=0x1;                                          //conf GPIO P0 as CLKOUT
+  47   1              P0MDIN  |=0x1;
+  48   1      
+  49   1              XBR0    |=0x8;
+  50   1      }
+
+
+C51 COMPILER V9.60.0.0   MAIN                                                              01/16/2020 00:12:21 PAGE 2   
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     68    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
