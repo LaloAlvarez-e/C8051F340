@@ -33,6 +33,7 @@
 							<tool id="com.silabs.ide.si8051.keil.toolchain.compiler.1428048308" name="Keil 8051 Compiler" superClass="com.silabs.ide.si8051.keil.toolchain.compiler">
 								<option id="com.silabs.ide.si8051.keil.compiler.category.optimization.level.1630758587" name="Level" superClass="com.silabs.ide.si8051.keil.compiler.category.optimization.level" value="com.silabs.ide.si8051.keil.compiler.category.optimization.level.8" valueType="enumerated"/>
 								<option id="com.silabs.ide.si8051.keil.compiler.category.optimization.emphasis.1687654861" name="Emphasis" superClass="com.silabs.ide.si8051.keil.compiler.category.optimization.emphasis" value="com.silabs.ide.si8051.keil.compiler.category.optimization.emphasis.speed" valueType="enumerated"/>
+								<option id="com.silabs.ide.si8051.keil.compiler.category.includes.paths.1581235674" name="Include paths (INCDIR(...))" superClass="com.silabs.ide.si8051.keil.compiler.category.includes.paths" valueType="includePath"/>
 								<inputType id="com.silabs.ide.si8051.keil.compiler.inputType.1570163443" superClass="com.silabs.ide.si8051.keil.compiler.inputType"/>
 							</tool>
 							<tool command="AX51" id="com.silabs.ide.si8051.keil.toolchain.assembler.1690440360" name="Keil 8051 Assembler" superClass="com.silabs.ide.si8051.keil.toolchain.assembler">
@@ -112,5 +113,12 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.silabs.ide.si8051.keil.KeilScannerInfoCollector"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Keil 8051 v9.60.0 - Release">
+			<resource resourceType="PROJECT" workspacePath="/C8051F340_HelloWorld"/>
+		</configuration>
+		<configuration configurationName="Keil 8051 v9.60.0 - Debug">
+			<resource resourceType="PROJECT" workspacePath="/C8051F340_HelloWorld"/>
+		</configuration>
+	</storageModule>
 </cproject>

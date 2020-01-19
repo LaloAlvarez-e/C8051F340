@@ -1,4 +1,4 @@
-LX51 LINKER/LOCATER V4.66.97.0                                                          01/18/2020  05:05:19  PAGE 1
+LX51 LINKER/LOCATER V4.66.97.0                                                          01/19/2020  01:17:11  PAGE 1
 
 
 LX51 LINKER/LOCATER V4.66.97.0, INVOKED BY:
@@ -24,11 +24,11 @@ BASE        START       END         USED      MEMORY CLASS
 ==========================================================
 C:000000H   C:000000H   C:00FBFEH             ECODE
 C:000000H   C:000000H   C:00FBFEH             HCONST
-X:000000H   X:000000H   X:000FFFH   001000H   XDATA
+X:000000H   X:000000H   X:000FFFH             XDATA
 X:000000H   X:000000H   X:000FFFH             HDATA
-C:000000H   C:000000H   C:00FFFFH   000024H   CODE
-I:000000H   I:000000H   I:00007FH   000018H   DATA
-I:000000H   I:000000H   I:0000FFH   0000B1H   IDATA
+C:000000H   C:000000H   C:00FFFFH   00005FH   CODE
+I:000000H   I:000000H   I:00007FH   00000AH   DATA
+I:000000H   I:000000H   I:0000FFH   000001H   IDATA
 
 
 MEMORY MAP OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
@@ -40,17 +40,13 @@ START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
 * * * * * * * * * * *   D A T A   M E M O R Y   * * * * * * * * * * * * *
 000000H   000007H   000008H   ---    AT..     DATA           "REG BANK 0"
 000008H   00001FH   000018H   ---    ---      **GAP**
-000020H   00002FH   000010H   BYTE   BITADDR  DATA           ?BA?MAIN
-000030H   0000DFH   0000B0H   BYTE   UNIT     IDATA          ?ID?MAIN
-0000E0H   0000E0H   000001H   BYTE   UNIT     IDATA          ?STACK
+000020H   000021H   000002H   BYTE   BITADDR  DATA           ?BA?MAIN
+000022H   000022H   000001H   BYTE   UNIT     IDATA          ?STACK
 
 * * * * * * * * * * *   C O D E   M E M O R Y   * * * * * * * * * * * * *
 000000H   000002H   000003H   ---    OFFS..   CODE           ?CO??C_STARTUP?0
-000003H   000017H   000015H   BYTE   UNIT     CODE           ?PR?MAIN?MAIN
-000018H   000023H   00000CH   BYTE   UNIT     CODE           ?C_C51STARTUP
-
-* * * * * * * * * * *  X D A T A   M E M O R Y  * * * * * * * * * * * * *
-000000H   000FFFH   001000H   BYTE   UNIT     XDATA          ?XD?MAIN
+000003H   000052H   000050H   BYTE   UNIT     CODE           ?PR?MAIN?MAIN
+000053H   00005EH   00000CH   BYTE   UNIT     CODE           ?C_C51STARTUP
 
 
 
@@ -64,13 +60,13 @@ FUNCTION/MODULE              BIT_GROUP   DATA_GROUP
   +--> MAIN/MAIN
 
 MAIN/MAIN                   ----- -----  ----- -----
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/18/2020  05:05:19  PAGE 2
-
-
 
 
 
 PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 2
+
+
 
 
       VALUE       CLASS    TYPE      PUBLIC SYMBOL NAME
@@ -103,11 +99,11 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 000000BBH   DATA     BYTE      AMX0P
 *SFR* 000000C0H.2 DATA     BIT       ARBLOST
 *SFR* 000000F0H   DATA     BYTE      B
-      00000020H   DATA     ---       bData
-      00000020H.0 DATA     BIT       bData0_0
-      00000020H.1 DATA     BIT       bData0_1
-      00000020H.2 DATA     BIT       bData0_2
-      00000020H.3 DATA     BIT       bData0_3
+*SFR* 000000A0H.2 DATA     BIT       bLED1
+*SFR* 000000A0H.3 DATA     BIT       bLED2
+      00000020H   DATA     INT       bStatusPin
+*SFR* 000000A0H.0 DATA     BIT       bSwitch1
+*SFR* 000000A0H.1 DATA     BIT       bSwitch2
 *SFR* 000000D8H.0 DATA     BIT       CCF0
 *SFR* 000000D8H.1 DATA     BIT       CCF1
 *SFR* 000000D8H.2 DATA     BIT       CCF2
@@ -129,13 +125,13 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 00000082H   DATA     BYTE      DPL
 *SFR* 000000A8H.7 DATA     BIT       EA
 *SFR* 000000E6H   DATA     BYTE      EIE1
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/18/2020  05:05:19  PAGE 3
-
-
 *SFR* 000000E7H   DATA     BYTE      EIE2
 *SFR* 000000F6H   DATA     BYTE      EIP1
 *SFR* 000000F7H   DATA     BYTE      EIP2
 *SFR* 00000085H   DATA     BYTE      EMI0CF
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 3
+
+
 *SFR* 000000AAH   DATA     BYTE      EMI0CN
 *SFR* 00000084H   DATA     BYTE      EMI0TC
 *SFR* 000000A8H.4 DATA     BIT       ES0
@@ -149,7 +145,6 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 000000D0H.1 DATA     BIT       F1
 *SFR* 000000B7H   DATA     BYTE      FLKEY
 *SFR* 000000B6H   DATA     BYTE      FLSCL
-      00000030H   IDATA    ---       iData
 *SFR* 000000A8H   DATA     BYTE      IE
 *SFR* 00000088H.1 DATA     BIT       IE0
 *SFR* 00000088H.3 DATA     BIT       IE1
@@ -194,14 +189,14 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 000000ECH   DATA     BYTE      PCA0CPH2
 *SFR* 000000EEH   DATA     BYTE      PCA0CPH3
 *SFR* 000000FEH   DATA     BYTE      PCA0CPH4
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/18/2020  05:05:19  PAGE 4
-
-
 *SFR* 000000FBH   DATA     BYTE      PCA0CPL0
 *SFR* 000000E9H   DATA     BYTE      PCA0CPL1
 *SFR* 000000EBH   DATA     BYTE      PCA0CPL2
 *SFR* 000000EDH   DATA     BYTE      PCA0CPL3
 *SFR* 000000FDH   DATA     BYTE      PCA0CPL4
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 4
+
+
 *SFR* 000000DAH   DATA     BYTE      PCA0CPM0
 *SFR* 000000DBH   DATA     BYTE      PCA0CPM1
 *SFR* 000000DCH   DATA     BYTE      PCA0CPM2
@@ -250,6 +245,7 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 000000A3H   DATA     BYTE      SPI0DAT
 *SFR* 000000F8H.0 DATA     BIT       SPIEN
 *SFR* 000000F8H.7 DATA     BIT       SPIF
+      00000020H.0 DATA     BIT       sSwitch2LastValue
 *SFR* 000000C0H.5 DATA     BIT       STA
 *SFR* 000000C0H.4 DATA     BIT       STO
 *SFR* 000000C8H.4 DATA     BIT       T2SOF
@@ -259,13 +255,13 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 00000088H   DATA     BYTE      TCON
 *SFR* 00000088H.5 DATA     BIT       TF0
 *SFR* 00000088H.7 DATA     BIT       TF1
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/18/2020  05:05:19  PAGE 5
-
-
 *SFR* 000000C8H.7 DATA     BIT       TF2H
 *SFR* 000000C8H.6 DATA     BIT       TF2L
 *SFR* 000000C8H.5 DATA     BIT       TF2LEN
 *SFR* 0000008CH   DATA     BYTE      TH0
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 5
+
+
 *SFR* 0000008DH   DATA     BYTE      TH1
 *SFR* 00000098H.1 DATA     BIT       TI0
 *SFR* 0000008AH   DATA     BYTE      TL0
@@ -294,7 +290,6 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 000000E1H   DATA     BYTE      XBR0
 *SFR* 000000E2H   DATA     BYTE      XBR1
 *SFR* 000000E3H   DATA     BYTE      XBR2
-      02000000H   XDATA    ---       xData
 
 
 
@@ -303,13 +298,8 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       VALUE       REP       CLASS    TYPE      SYMBOL NAME
       ====================================================
       ---         MODULE    ---      ---       MAIN
-      02000000H   PUBLIC    XDATA    ---       xData
-      00000030H   PUBLIC    IDATA    ---       iData
-      00000020H.3 PUBLIC    DATA     BIT       bData0_3
-      00000020H.2 PUBLIC    DATA     BIT       bData0_2
-      00000020H.1 PUBLIC    DATA     BIT       bData0_1
-      00000020H.0 PUBLIC    DATA     BIT       bData0_0
-      00000020H   PUBLIC    DATA     ---       bData
+      00000020H.0 PUBLIC    DATA     BIT       sSwitch2LastValue
+      00000020H   PUBLIC    DATA     INT       bStatusPin
       01000003H   PUBLIC    CODE     ---       main
       000000D8H.2 SFRSYM    DATA     BIT       CCF2
       00000098H.3 SFRSYM    DATA     BIT       TB80
@@ -324,9 +314,6 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       000000B0H   SFRSYM    DATA     BYTE      P3
       000000D0H.6 SFRSYM    DATA     BIT       AC
       000000C7H   SFRSYM    DATA     BYTE      P4
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/18/2020  05:05:19  PAGE 6
-
-
       000000E6H   SFRSYM    DATA     BYTE      EIE1
       000000A8H.7 SFRSYM    DATA     BIT       EA
       00000098H.5 SFRSYM    DATA     BIT       MCE0
@@ -335,6 +322,11 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       0000008FH   SFRSYM    DATA     BYTE      PSCTL
       000000D8H.7 SFRSYM    DATA     BIT       CF
       000000E4H   SFRSYM    DATA     BYTE      IT01CF
+      000000A0H.0 SFRSYM    DATA     BIT       bSwitch1
+      000000A0H.1 SFRSYM    DATA     BIT       bSwitch2
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 6
+
+
       000000E8H   SFRSYM    DATA     BYTE      ADC0CN
       000000A4H   SFRSYM    DATA     BYTE      P0MDOUT
       000000A5H   SFRSYM    DATA     BYTE      P1MDOUT
@@ -389,9 +381,6 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       00000084H   SFRSYM    DATA     BYTE      EMI0TC
       000000D0H.2 SFRSYM    DATA     BIT       OV
       000000C0H   SFRSYM    DATA     BYTE      SMB0CN
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/18/2020  05:05:19  PAGE 7
-
-
       000000F8H.5 SFRSYM    DATA     BIT       MODF
       000000ACH   SFRSYM    DATA     BYTE      SBCON1
       00000098H.7 SFRSYM    DATA     BIT       S0MODE
@@ -400,6 +389,9 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       0000009DH   SFRSYM    DATA     BYTE      CPT0MD
       0000009BH   SFRSYM    DATA     BYTE      CPT0CN
       000000F2H   SFRSYM    DATA     BYTE      P1MDIN
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 7
+
+
       0000009CH   SFRSYM    DATA     BYTE      CPT1MD
       0000009AH   SFRSYM    DATA     BYTE      CPT1CN
       000000F3H   SFRSYM    DATA     BYTE      P2MDIN
@@ -454,9 +446,6 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       000000A8H.2 SFRSYM    DATA     BIT       EX1
       00000088H.2 SFRSYM    DATA     BIT       IT1
       000000D0H.0 SFRSYM    DATA     BIT       P
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/18/2020  05:05:19  PAGE 8
-
-
       000000C0H.1 SFRSYM    DATA     BIT       ACK
       000000B1H   SFRSYM    DATA     BYTE      OSCXCN
       0000008AH   SFRSYM    DATA     BYTE      TL0
@@ -465,6 +454,9 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       000000C0H.6 SFRSYM    DATA     BIT       TXMODE
       000000B8H.4 SFRSYM    DATA     BIT       PS0
       000000B8H.1 SFRSYM    DATA     BIT       PT0
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 8
+
+
       000000D0H.3 SFRSYM    DATA     BIT       RS0
       000000B8H.3 SFRSYM    DATA     BIT       PT1
       000000D0H.4 SFRSYM    DATA     BIT       RS1
@@ -491,6 +483,8 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       000000C5H   SFRSYM    DATA     BYTE      ADC0LTL
       000000BBH   SFRSYM    DATA     BYTE      AMX0P
       000000C0H.5 SFRSYM    DATA     BIT       STA
+      000000A0H.2 SFRSYM    DATA     BIT       bLED1
+      000000A0H.3 SFRSYM    DATA     BIT       bLED2
       000000B8H.6 SFRSYM    DATA     BIT       PSPI0
       000000C2H   SFRSYM    DATA     BYTE      SMB0DAT
       000000CDH   SFRSYM    DATA     BYTE      TMR2H
@@ -519,29 +513,48 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       00000098H.2 SFRSYM    DATA     BIT       RB80
       000000B7H   SFRSYM    DATA     BYTE      FLKEY
       000000D8H.1 SFRSYM    DATA     BIT       CCF1
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/18/2020  05:05:19  PAGE 9
-
-
 
       01000003H   BLOCK     CODE     ---       LVL=0
-      01000003H   LINE      CODE     ---       #21
-      01000003H   LINE      CODE     ---       #22
-      01000003H   LINE      CODE     ---       #23
-      01000006H   LINE      CODE     ---       #24
-      01000008H   LINE      CODE     ---       #25
-      0100000AH   LINE      CODE     ---       #26
-      0100000CH   LINE      CODE     ---       #27
-      0100000EH   LINE      CODE     ---       #28
-      0100000EH   LINE      CODE     ---       #29
-      0100000EH   LINE      CODE     ---       #30
-      01000010H   LINE      CODE     ---       #31
-      01000012H   LINE      CODE     ---       #32
-      01000014H   LINE      CODE     ---       #33
-      01000016H   LINE      CODE     ---       #34
+      01000003H   BLOCK     CODE     NEAR LAB  LVL=1
+      00000006H   SYMBOL    DATA     WORD      i
+      ---         BLOCKEND  ---      ---       LVL=1
+      01000003H   LINE      CODE     ---       #43
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 9
+
+
+      01000003H   LINE      CODE     ---       #44
+      01000003H   LINE      CODE     ---       #45
+      01000006H   LINE      CODE     ---       #46
+      01000009H   LINE      CODE     ---       #49
+      0100000CH   LINE      CODE     ---       #52
+      0100000FH   LINE      CODE     ---       #55
+      01000012H   LINE      CODE     ---       #58
+      01000015H   LINE      CODE     ---       #62
+      01000018H   LINE      CODE     ---       #65
+      0100001BH   LINE      CODE     ---       #66
+      0100001DH   LINE      CODE     ---       #69
+      01000020H   LINE      CODE     ---       #72
+      01000023H   LINE      CODE     ---       #74
+      01000023H   LINE      CODE     ---       #75
+      01000023H   LINE      CODE     ---       #76
+      01000026H   LINE      CODE     ---       #77
+      01000026H   LINE      CODE     ---       #78
+      01000028H   LINE      CODE     ---       #79
+      0100002AH   LINE      CODE     ---       #81
+      0100002AH   LINE      CODE     ---       #82
+      0100002CH   LINE      CODE     ---       #84
+      0100002CH   LINE      CODE     ---       #88
+      01000034H   LINE      CODE     ---       #89
+      01000034H   LINE      CODE     ---       #90
+      01000038H   LINE      CODE     ---       #91
+      0100003BH   LINE      CODE     ---       #92
+      0100003BH   LINE      CODE     ---       #93
+      01000040H   LINE      CODE     ---       #94
+      01000040H   LINE      CODE     ---       #95
       ---         BLOCKEND  ---      ---       LVL=0
 
       ---         MODULE    ---      ---       ?C_STARTUP
       01000000H   PUBLIC    CODE     ---       ?C_STARTUP
 
-Program Size: data=201.0 xdata=4096 const=0 code=36
+Program Size: data=11.0 xdata=0 const=0 code=95
 LX51 RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

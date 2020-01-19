@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              01/18/2020 05:05:19 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              01/19/2020 01:17:11 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\main.OBJ
 COMPILER INVOKED BY: Z:\home\vyldram\SimplicityStudio_v4\developer\toolchains\keil_8051\9.60\BIN\C51.exe /home/vyldram/G
-                    -it/C8051C340/C8051F340_HelloWorld/main.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE
+                    -it/C8051F340/C8051F340_HelloWorld/main.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE
                     -(8,SPEED) INTVECTOR(0X0000) INTPROMOTE PRINT(.\main.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\main.OBJ)
 
 line level    source
@@ -15,44 +15,110 @@ line level    source
    4           *  Created on: 18/01/2020
    5           *      Author: vyldram
    6           */
-   7          
-   8          //#include <SiLABS\c8051F340.h>
-   9          #include <Cygnal\c8051F340.h>
-  10          
-  11          idata unsigned char iData[0xE0-0x30];
-  12          xdata unsigned char xData[0x1000-0x00];
-  13          
-  14          
-  15          bdata unsigned char bData[0x30-0x20];
-  16          sbit  bData0_0 =bData[0]^0;
-  17          sbit  bData0_1 =bData[0]^1;
-  18          sbit  bData0_2 =bData[0]^2;
-  19          sbit  bData0_3 =bData[0]^3;
-  20          
-  21          void main(void)
-  22          {
-  23   1              PCA0MD &=~0x40;
-  24   1              bData0_0=0;
-  25   1              bData0_1=1;
-  26   1              bData0_2=0;
-  27   1              bData0_3=1;
-  28   1              while(1)
-  29   1              {
-  30   2                      bData0_0=1;
-  31   2                      bData0_1=0;
-  32   2                      bData0_2=1;
-  33   2                      bData0_3=0;
-  34   2              }
-  35   1      }
+   7          #include <Cygnal\c8051F340.h>
+   8          
+   9          
+  10          /*
+  11           * Overview:
+  12           * Watch Dog Disabled
+  13           * Configuration of P2.0 and P2.1 as Digital Input (Open-Drain)
+  14           * Configuration of P2.2 and P2.2 as Digital Output (Push-Pull)
+  15           *
+  16           * P2.0 and P2.1 are connected to 2 switches from development boars
+  17           * P2.2 and P2.3 are connected to 2 LED
+  18           *
+  19           * Functionality:
+  20           *
+  21           * When the Switch connected to P2.0 (switch1) is pressed the LED in P2.2 (LED1) is turned ON,
+  22           * otherwise LED is OFF
+  23           * When Switch connected to P2.1 (switch2) is pressed, LED in P2.3 (LED2) change its state.
+  24           */
+  25          
+  26          /* P2 is the definitions for Port2 value, this SFR has the property of Bit addressing
+  27           * for this reason, each Pin of Port2 can be accessing independently with the directive sbit
+  28           */
+  29          
+  30          sbit bSwitch1 = P2^0; // 0xA0+0 definition for input value of Switch1
+  31          sbit bSwitch2 = P2^1;// 0xA1 definition for input value of Switch2
+  32          sbit bLED1 = P2^2;// 0xA2 definition for output value of LED1
+  33          sbit bLED2 = P2^3;// 0xA3 definition for outpuy value of LED2
+  34          
+  35          #define SWITCH1_PIN (0x1u) // (1<<0)
+  36          #define SWITCH2_PIN (0x2u) // (1<<1)
+  37          #define LED1_PIN (0x4u) // (1<<2)
+  38          #define LED2_PIN (0x8u) //(1<<3)
+  39          
+  40          bdata bStatusPin;
+  41          sbit sSwitch2LastValue = bStatusPin^0;
+  42          
+  43          void main(void)
+  44          {
+  45   1              unsigned short i=0;
+  46   1              PCA0MD &=~0x40; //Disable WathcDog
+  47   1      
+  48   1              /*LED and Switches configured as Digital Input*/
+  49   1              P2MDIN|=(SWITCH1_PIN|SWITCH2_PIN|LED1_PIN|LED2_PIN);
+  50   1      
+  51   1              /*Switches configured as Open Drain Output*/
+  52   1              P2MDOUT&=~(SWITCH1_PIN|SWITCH2_PIN);
+  53   1      
+  54   1              /*Switches configured as push-pull Output*/
+C51 COMPILER V9.60.0.0   MAIN                                                              01/19/2020 01:17:11 PAGE 2   
+
+  55   1              P2MDOUT|=(LED1_PIN|LED2_PIN);
+  56   1      
+  57   1              /*LED and Switches skipped from CrossBar*/
+  58   1              P2SKIP|=(SWITCH1_PIN|SWITCH2_PIN|LED1_PIN|LED2_PIN);
+  59   1      
+  60   1      
+  61   1              /*LED initial State as LOW value*/
+  62   1              P2&=~(LED1_PIN|LED2_PIN);
+  63   1      
+  64   1              /*Switches configured as high impedance to avoid short circuits on inputs*/
+  65   1              P2|=(SWITCH1_PIN|SWITCH2_PIN);
+  66   1              sSwitch2LastValue = 1;
+  67   1      
+  68   1              /*Wake pull-up enable in all pins except on output and analog input*/
+  69   1              XBR1&=~0x80;
+  70   1      
+  71   1              /*CrossBar enable*/
+  72   1              XBR1|=0x40;
+  73   1      
+  74   1              while(1)
+  75   1              {
+  76   2                      if(bSwitch1 == 0) //if switch1 is pressed LED1 is turned ON otherwise LED1 is turned OFF
+  77   2                      {
+  78   3                              bLED1=1;
+  79   3                      }
+  80   2                      else
+  81   2                      {
+  82   3                              bLED1=0;
+  83   3      
+  84   3                      }
+  85   2                      /*
+  86   2                       * If switch2 value is different from the latest value, then LEd 2 change its value.
+  87   2                       */
+  88   2                      if(sSwitch2LastValue != bSwitch2)
+  89   2                      {
+  90   3                              sSwitch2LastValue=bSwitch2;
+  91   3                              if(sSwitch2LastValue == 0)
+  92   3                              {
+  93   4                                      bLED2 ^=1;
+  94   4                              }
+  95   3                              for(i=0; (unsigned short)i<(unsigned short)15000;i++); //debounce
+  96   3      
+  97   3                      }
+  98   2              }
+  99   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     21    ----
+   CODE SIZE        =     80    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =   4096    ----
+   XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     16    ----
-   IDATA SIZE       =    176    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----

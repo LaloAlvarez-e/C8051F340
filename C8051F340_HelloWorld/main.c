@@ -4,32 +4,96 @@
  *  Created on: 18/01/2020
  *      Author: vyldram
  */
-
-//#include <SiLABS\c8051F340.h>
 #include <Cygnal\c8051F340.h>
 
-idata unsigned char iData[0xE0-0x30];
-xdata unsigned char xData[0x1000-0x00];
 
+/*
+ * Overview:
+ * Watch Dog Disabled
+ * Configuration of P2.0 and P2.1 as Digital Input (Open-Drain)
+ * Configuration of P2.2 and P2.2 as Digital Output (Push-Pull)
+ *
+ * P2.0 and P2.1 are connected to 2 switches from development boars
+ * P2.2 and P2.3 are connected to 2 LED
+ *
+ * Functionality:
+ *
+ * When the Switch connected to P2.0 (switch1) is pressed the LED in P2.2 (LED1) is turned ON,
+ * otherwise LED is OFF
+ * When Switch connected to P2.1 (switch2) is pressed, LED in P2.3 (LED2) change its state.
+ */
 
-bdata unsigned char bData[0x30-0x20];
-sbit  bData0_0 =bData[0]^0;
-sbit  bData0_1 =bData[0]^1;
-sbit  bData0_2 =bData[0]^2;
-sbit  bData0_3 =bData[0]^3;
+/* P2 is the definitions for Port2 value, this SFR has the property of Bit addressing
+ * for this reason, each Pin of Port2 can be accessing independently with the directive sbit
+ */
+
+sbit bSwitch1 = P2^0; // 0xA0+0 definition for input value of Switch1
+sbit bSwitch2 = P2^1;// 0xA1 definition for input value of Switch2
+sbit bLED1 = P2^2;// 0xA2 definition for output value of LED1
+sbit bLED2 = P2^3;// 0xA3 definition for outpuy value of LED2
+
+#define SWITCH1_PIN (0x1u) // (1<<0)
+#define SWITCH2_PIN (0x2u) // (1<<1)
+#define LED1_PIN (0x4u) // (1<<2)
+#define LED2_PIN (0x8u) //(1<<3)
+
+bdata bStatusPin;
+sbit sSwitch2LastValue = bStatusPin^0;
 
 void main(void)
 {
-	PCA0MD &=~0x40;
-	bData0_0=0;
-	bData0_1=1;
-	bData0_2=0;
-	bData0_3=1;
+	unsigned short i=0;
+	PCA0MD &=~0x40; //Disable WathcDog
+
+	/*LED and Switches configured as Digital Input*/
+	P2MDIN|=(SWITCH1_PIN|SWITCH2_PIN|LED1_PIN|LED2_PIN);
+
+	/*Switches configured as Open Drain Output*/
+	P2MDOUT&=~(SWITCH1_PIN|SWITCH2_PIN);
+
+	/*Switches configured as push-pull Output*/
+	P2MDOUT|=(LED1_PIN|LED2_PIN);
+
+	/*LED and Switches skipped from CrossBar*/
+	P2SKIP|=(SWITCH1_PIN|SWITCH2_PIN|LED1_PIN|LED2_PIN);
+
+
+	/*LED initial State as LOW value*/
+	P2&=~(LED1_PIN|LED2_PIN);
+
+	/*Switches configured as high impedance to avoid short circuits on inputs*/
+	P2|=(SWITCH1_PIN|SWITCH2_PIN);
+	sSwitch2LastValue = 1;
+
+	/*Wake pull-up enable in all pins except on output and analog input*/
+	XBR1&=~0x80;
+
+	/*CrossBar enable*/
+	XBR1|=0x40;
+
 	while(1)
 	{
-		bData0_0=1;
-		bData0_1=0;
-		bData0_2=1;
-		bData0_3=0;
+		if(bSwitch1 == 0) //if switch1 is pressed LED1 is turned ON otherwise LED1 is turned OFF
+		{
+			bLED1=1;
+		}
+		else
+		{
+			bLED1=0;
+
+		}
+		/*
+		 * If switch2 value is different from the latest value, then LEd 2 change its value.
+		 */
+		if(sSwitch2LastValue != bSwitch2)
+		{
+			sSwitch2LastValue=bSwitch2;
+			if(sSwitch2LastValue == 0)
+			{
+				bLED2 ^=1;
+			}
+			for(i=0; (unsigned short)i<(unsigned short)15000;i++); //debounce
+
+		}
 	}
 }
