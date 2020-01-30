@@ -1,0 +1,96 @@
+C51 COMPILER V9.60.0.0   OSCILLATOR                                                        01/23/2020 23:33:09 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE OSCILLATOR
+OBJECT MODULE PLACED IN .\Oscillator.OBJ
+COMPILER INVOKED BY: Z:\home\vyldram\SimplicityStudio_v4\developer\toolchains\keil_8051\9.60\BIN\C51.exe /home/vyldram/G
+                    -it/C8051F340/C8051F340_GpioInterrupt/Oscillator.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3)
+                    - OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(/home/vyldram/Git/C8051F340/C8051F340_GpioInterrupt) PRINT(.\Osci
+                    -llator.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\Oscillator.OBJ)
+
+line level    source
+
+   1          /*
+   2           * Oscillator.c
+   3           *
+   4           *  Created on: 21/01/2020
+   5           *      Author: vyldram
+   6           */
+   7          
+   8          #include "Oscillator.h"
+   9          
+  10          void Oscillator_vInit (Oscillator_nSYSCLKSource nSource)
+  11          {
+  12   1      
+  13   1              switch(nSource)
+  14   1              {
+  15   2              case Oscillator_enSYSCLKSourceIOSC: //12MHz
+  16   2                      Oscillator_vHighFrecInit(Oscillator_enDiv1);
+  17   2                      break;
+  18   2              case Oscillator_enSYSCLKSourceMult2: //24MHz
+  19   2              case Oscillator_enSYSCLKSourceMult4: //48MHz
+  20   2                      Oscillator_vMultiplierFrecInit(Oscillator_enMultSourceIOSC);
+  21   2                      break;
+  22   2              case Oscillator_enSYSCLKSourceLF:  //120KHz
+  23   2                      Oscillator_vLowFrecInit(Oscillator_enDiv1);
+  24   2                      break;
+  25   2              case Oscillator_enSYSCLKSourceEOSC:
+  26   2              default:
+  27   2                      return;//External Oscillator Init
+  28   2      
+  29   2              }
+  30   1      
+  31   1              CLKSEL&=~0x7;                                           //set SYSCLK source
+  32   1              CLKSEL|=(unsigned char)nSource;
+  33   1      }
+  34          
+  35          void Oscillator_vMultiplierFrecInit (Oscillator_nMultSource nSource)
+  36          {
+  37   1              unsigned short i=0;
+  38   1              /* Enable 4x multiplier and select it as SYSCLK     */
+  39   1      
+  40   1              CLKMUL =0;                                                      //Disable Multiplier functionality
+  41   1              CLKMUL |=((unsigned char)nSource);      //multiplier source Internal OSC
+  42   1              CLKMUL |= 0x80;                                         //Enable Multiplier
+  43   1              for (i=0; i<50000; i++);                        //Delay needed after enable Multiplier
+  44   1              CLKMUL|=0xC0;                                           //Initialize Clock Multiplier
+  45   1              while((CLKMUL & 0x20) == 0);            //Wait until Multiplier Ready
+  46   1      }
+  47          
+  48          void Oscillator_vLowFrecInit (Oscillator_nDiv nDiv)
+  49          {
+  50   1              /* Enable Low Frequency Oscillator     */
+  51   1      
+  52   1              OSCLCN =0;                                                      //Disable Low frequency Oscillator functionality
+  53   1              OSCLCN|=(unsigned char)nDiv;                                            ///divider 1
+C51 COMPILER V9.60.0.0   OSCILLATOR                                                        01/23/2020 23:33:09 PAGE 2   
+
+  54   1      
+  55   1              OSCLCN |= 0x80;                                         //Enable Low Freq Oscillator
+  56   1              while((OSCLCN & 0x40) == 0);            //Wait until Low Frequency Oscillator Ready
+  57   1      }
+  58          
+  59          
+  60          void Oscillator_vHighFrecInit (Oscillator_nDiv nDiv)
+  61          {
+  62   1              /* Enable High Frequency Oscillator     */
+  63   1              OSCICN|=(unsigned char)nDiv;                            ///divider 1
+  64   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    111    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,4 +1,4 @@
-LX51 LINKER/LOCATER V4.66.97.0                                                          01/19/2020  01:17:11  PAGE 1
+LX51 LINKER/LOCATER V4.66.97.0                                                          01/20/2020  02:01:33  PAGE 1
 
 
 LX51 LINKER/LOCATER V4.66.97.0, INVOKED BY:
@@ -64,7 +64,7 @@ MAIN/MAIN                   ----- -----  ----- -----
 
 
 PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 2
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/20/2020  02:01:33  PAGE 2
 
 
 
@@ -129,7 +129,7 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 000000F6H   DATA     BYTE      EIP1
 *SFR* 000000F7H   DATA     BYTE      EIP2
 *SFR* 00000085H   DATA     BYTE      EMI0CF
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 3
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/20/2020  02:01:33  PAGE 3
 
 
 *SFR* 000000AAH   DATA     BYTE      EMI0CN
@@ -194,7 +194,7 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 000000EBH   DATA     BYTE      PCA0CPL2
 *SFR* 000000EDH   DATA     BYTE      PCA0CPL3
 *SFR* 000000FDH   DATA     BYTE      PCA0CPL4
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 4
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/20/2020  02:01:33  PAGE 4
 
 
 *SFR* 000000DAH   DATA     BYTE      PCA0CPM0
@@ -259,7 +259,7 @@ PUBLIC SYMBOLS OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
 *SFR* 000000C8H.6 DATA     BIT       TF2L
 *SFR* 000000C8H.5 DATA     BIT       TF2LEN
 *SFR* 0000008CH   DATA     BYTE      TH0
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 5
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/20/2020  02:01:33  PAGE 5
 
 
 *SFR* 0000008DH   DATA     BYTE      TH1
@@ -324,7 +324,7 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       000000E4H   SFRSYM    DATA     BYTE      IT01CF
       000000A0H.0 SFRSYM    DATA     BIT       bSwitch1
       000000A0H.1 SFRSYM    DATA     BIT       bSwitch2
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 6
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/20/2020  02:01:33  PAGE 6
 
 
       000000E8H   SFRSYM    DATA     BYTE      ADC0CN
@@ -389,7 +389,7 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       0000009DH   SFRSYM    DATA     BYTE      CPT0MD
       0000009BH   SFRSYM    DATA     BYTE      CPT0CN
       000000F2H   SFRSYM    DATA     BYTE      P1MDIN
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 7
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/20/2020  02:01:33  PAGE 7
 
 
       0000009CH   SFRSYM    DATA     BYTE      CPT1MD
@@ -454,7 +454,7 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       000000C0H.6 SFRSYM    DATA     BIT       TXMODE
       000000B8H.4 SFRSYM    DATA     BIT       PS0
       000000B8H.1 SFRSYM    DATA     BIT       PT0
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 8
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/20/2020  02:01:33  PAGE 8
 
 
       000000D0H.3 SFRSYM    DATA     BIT       RS0
@@ -519,7 +519,7 @@ SYMBOL TABLE OF MODULE:  C8051F340_HELLOWORLD.OMF.CRBUILD (MAIN)
       00000006H   SYMBOL    DATA     WORD      i
       ---         BLOCKEND  ---      ---       LVL=1
       01000003H   LINE      CODE     ---       #43
-LX51 LINKER/LOCATER V4.66.97.0                                                        01/19/2020  01:17:11  PAGE 9
+LX51 LINKER/LOCATER V4.66.97.0                                                        01/20/2020  02:01:33  PAGE 9
 
 
       01000003H   LINE      CODE     ---       #44

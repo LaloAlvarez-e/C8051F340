@@ -5,46 +5,52 @@
  *      Author: vyldram
  */
 
-#include <c8051F340.h>
-#include <si_toolchain.h>
-#include <INTRINS.H>
+#include <SiLABS\c8051F340.h>
+#include <Oscillator.h>
 
-void OSCILLATOR_Init (void);
 
+void Port_vInit (void);
 
 
 
 void main (void)
 {
-	PCA0MD &= ~0x40;                    // WDTE = 0 (clear watchdog timer enable)
-
-	OSCILLATOR_Init ();                 // Initialize Oscillator
-
+	unsigned short i=0;
+	unsigned char j=0;
+	PCA0MD &= ~0x40;		// WDTE = 0 (clear watchdog timer enable)
+	PFE0CN |=0x20;			//Enable Pre-fetch
+	FLSCL|=0x10;			//increase wait state
+	Oscillator_vInit (Oscillator_enSYSCLKSourceMult4);	// Initialize Oscillator
+	Port_vInit();			// Initialize Clkout as output
 
 	while (1)
 	{
+		for(j=0;(unsigned char)j<(unsigned char)100; j++)
+		for(i=0;(unsigned short)i<(unsigned short)1000ul; i++);
+		P2^=0x4;
 	}
 }
 
 
-
-void OSCILLATOR_Init (void)
+void Port_vInit(void)
 {
-	unsigned short i=0;
-	OSCICN |= 0x03;                     // Configure internal oscillator for
-                                       // its maximum frequency (12 Mhz)
 
-	CLKMUL =0;							//activate oscillator multiplier
-	CLKMUL |= 0x80;
-	for (i=0; i<50000; i++);
-	CLKMUL|=0xC0;
-	while((CLKMUL & 0x20) == 0);
+	P0MDIN 	|=0x1;						//conf as Digital Input
+	P0MDOUT |=0x1;						//conf GPIO P0 as push-pull output
 
-	CLKSEL&=~0x7;						//set x4 multiplier source
-	CLKSEL|=3;
 
-	P0MDOUT |=0x1;						//conf GPIO P0 as CLKOUT
-	P0MDIN 	|=0x1;
+	P2MDIN |=0x4;						//Conf P2.2 as Output, Push-Pull Initial LOW
+	P2MDOUT|=0x4;
+	P2SKIP|=0x4;
+	P2&=~0x4;
 
+	/* Activate SYSCLK output*/
 	XBR0	|=0x8;
+
+	/*Wake pull-up enable in all pins except on output and analog input*/
+	XBR1&=~0x80;
+
+	/*CrossBar enable*/
+	XBR1|=0x40;
+
 }

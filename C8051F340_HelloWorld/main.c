@@ -43,33 +43,6 @@ sbit sSwitch2LastValue = bStatusPin^0;
 void main(void)
 {
 	unsigned short i=0;
-	PCA0MD &=~0x40; //Disable WathcDog
-
-	/*LED and Switches configured as Digital Input*/
-	P2MDIN|=(SWITCH1_PIN|SWITCH2_PIN|LED1_PIN|LED2_PIN);
-
-	/*Switches configured as Open Drain Output*/
-	P2MDOUT&=~(SWITCH1_PIN|SWITCH2_PIN);
-
-	/*Switches configured as push-pull Output*/
-	P2MDOUT|=(LED1_PIN|LED2_PIN);
-
-	/*LED and Switches skipped from CrossBar*/
-	P2SKIP|=(SWITCH1_PIN|SWITCH2_PIN|LED1_PIN|LED2_PIN);
-
-
-	/*LED initial State as LOW value*/
-	P2&=~(LED1_PIN|LED2_PIN);
-
-	/*Switches configured as high impedance to avoid short circuits on inputs*/
-	P2|=(SWITCH1_PIN|SWITCH2_PIN);
-	sSwitch2LastValue = 1;
-
-	/*Wake pull-up enable in all pins except on output and analog input*/
-	XBR1&=~0x80;
-
-	/*CrossBar enable*/
-	XBR1|=0x40;
 
 	while(1)
 	{
