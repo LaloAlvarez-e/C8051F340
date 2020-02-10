@@ -1,0 +1,62 @@
+C51 COMPILER V9.60.0.0   ADC0                                                              02/10/2020 00:57:44 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ADC0
+OBJECT MODULE PLACED IN .\ADC0.OBJ
+COMPILER INVOKED BY: Z:\home\vyldram\SimplicityStudio_v4\developer\toolchains\keil_8051\9.60\BIN\C51.exe /home/vyldram/G
+                    -it/C8051F340/C8051C340_ADC_Polling/ADC0.c OMF2 COMPACT DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIM
+                    -IZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(/home/vyldram/Git/C8051F340/C8051C340_ADC_Polling/external_copied_files
+                    -;/home/vyldram/Git/C8051F340/C8051C340_ADC_Polling) REGFILE(C8051C340_ADC_Polling.ORC) NOAREGS PRINT(.\ADC0.lst) COND PA
+                    -GEWIDTH(120) PAGELENGTH(65) OBJECT(.\ADC0.OBJ)
+
+line level    source
+
+   1          /*
+   2           * ADC.c
+   3           *
+   4           *  Created on: 09/02/2020
+   5           *      Author: vyldram
+   6           */
+   7          
+   8          
+   9          #include <ADC0.h>
+  10          
+  11          void ADC0_vInit(void)
+  12          {
+  13   1              REF0CN|=0x8; //VCC VREF
+  14   1              P3MDIN&=~0x1; //3.0 as analog input
+  15   1              P3SKIP|=0x1;  //skip 3.0 crossbar
+  16   1              AMX0P = 0x06; //3.0
+  17   1              AMX0N = 0x1F; //GND
+  18   1              ADC0CF=0xB8; //maximum sample time and right-jistified
+  19   1              ADC0CN= 0xC0;
+  20   1      }
+  21          
+  22          unsigned short ADC0_vSample(void)
+  23          {
+  24   1              unsigned short u16Value =0x400;
+  25   1              ADC0CN|=0x10;
+  26   1              while((ADC0CN & 0x10));
+  27   1              u16Value=ADC0H<<8;
+  28   1              u16Value|=ADC0L;
+  29   1      
+  30   1              return u16Value;
+  31   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     43    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

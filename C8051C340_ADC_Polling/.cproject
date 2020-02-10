@@ -38,6 +38,7 @@
 								<option id="com.silabs.ide.si8051.keil.compiler.category.optimization.aregs.1801152731" name="Don't use absolute register accesses" superClass="com.silabs.ide.si8051.keil.compiler.category.optimization.aregs" value="true" valueType="boolean"/>
 								<option id="com.silabs.ide.si8051.keil.compiler.category.includes.paths.1258426949" name="Include paths (INCDIR(...))" superClass="com.silabs.ide.si8051.keil.compiler.category.includes.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/external_copied_files}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
 								</option>
 								<inputType id="com.silabs.ide.si8051.keil.compiler.inputType.2108330234" superClass="com.silabs.ide.si8051.keil.compiler.inputType"/>
 							</tool>
@@ -46,6 +47,7 @@
 								<option id="com.silabs.ide.si8051.keil.assembler.category.general.sfrnames.839910634" name="Define 8051 SFR names" superClass="com.silabs.ide.si8051.keil.assembler.category.general.sfrnames" value="false" valueType="boolean"/>
 								<option id="com.silabs.ide.si8051.keil.assembler.category.includes.paths.1017199743" name="Include paths (INCDIR(...))" superClass="com.silabs.ide.si8051.keil.assembler.category.includes.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/external_copied_files}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
 								</option>
 								<inputType id="com.silabs.ide.si8051.keil.assembler.inputType.283818425" superClass="com.silabs.ide.si8051.keil.assembler.inputType"/>
 							</tool>
