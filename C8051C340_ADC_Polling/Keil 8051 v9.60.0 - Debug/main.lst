@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              02/10/2020 00:57:45 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              02/11/2020 01:09:48 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -29,66 +29,151 @@ line level    source
   16          #include <EXTI.h>
   17          
   18          
-  19          sbit SW1  =  P2^0;                     // SW1 ='0' means switch pressed
-  20          sbit SW2  =  P2^1;                     // SW2 ='0' means switch pressed
-  21          sbit LED1 =  P2^2;                     // LED1 ='1' means ON
-  22          sbit LED2 =  P2^3;                     // LED2 ='1' means ON
-  23          
-  24          
-  25          bdata unsigned char  variable1[3];
-  26          
-  27          sbit var10= variable1[0]^0;
-  28          data unsigned char  variable2;
-  29          idata unsigned char  variable3;
-  30          pdata unsigned char  variable4;
+  19          
+  20          //lugar del pin donde se encuentra cada segmento
+  21          #define SEG_A (1) //P1.0 = seg A
+  22          #define SEG_B (2) //P1.1 = seg B
+  23          #define SEG_C (4) //P1.2 = seg C
+  24          #define SEG_D (8) //P1.3 = seg D
+  25          #define SEG_E (0x10) //P1.4 = seg E
+  26          #define SEG_F (0x20) //P1.5 = seg F
+  27          #define SEG_G (0x40) //P1.6 = seg G
+  28          #define SEG_DP (0x80)//P1.7 = seg DP
+  29          
+  30          #define PSEG P1 //P1 segmentos
   31          
-  32          void main (void)
-  33          {
-  34   1              PCA0MD &= ~0x40;                // WDTE = 0 (clear watchdog timer enable)
-  35   1              PFE0CN |=0x20;                  //Enable Pre-fetch
-  36   1              FLSCL|=0x10;                    //increase wait state
-  37   1      
-  38   1      
-  39   1              Oscillator_vInit(Oscillator_enSYSCLKSourceMult4);// Initialize Oscillator
-  40   1              GPIO_vInit(); // Initialize Port I/O
-  41   1              ADC0_vInit();
-  42   1      
-  43   1              while (1)
-  44   1              {
-  45   2                      if ((unsigned short)ADC0_vSample() < 0x200)                    // If switch depressed
-  46   2                      {
-  47   3                              LED1 = 1;                     // Turn on LED
-  48   3                              var10=0;
-  49   3      
-  50   3                      }
-  51   2                      else
-  52   2                      {
-C51 COMPILER V9.60.0.0   MAIN                                                              02/10/2020 00:57:45 PAGE 2   
+  32          #define CE0 (0x10) //P0.4 = Com0
+  33          #define CE1 (0x20) //P0.5 = Com1
+  34          #define CE2 (0x40) //P0.6 = Com2
+  35          #define CE3 (0x80) //P0.7 = Com3
+  36          
+  37          #define PCE P0 //P1 comunes
+  38          
+  39          
+  40          
+  41          //definciones para imprimir numeros en un display de Anodo Común
+  42          //para activar un led debemos poner el PIN correspondiente en 0
+  43          #define SEG_CL (0xFF) //apaga todos los LED del segmento
+  44          #define SEG_N0 ~(SEG_A|SEG_B|SEG_C|SEG_D|SEG_E|SEG_F)
+  45          #define SEG_N1 ~(SEG_B|SEG_C)
+  46          #define SEG_N2 ~(SEG_A|SEG_B|SEG_D|SEG_E|SEG_G)
+  47          #define SEG_N3 ~(SEG_A|SEG_B|SEG_C|SEG_D|SEG_G)
+  48          #define SEG_N4 ~(SEG_B|SEG_C|SEG_F|SEG_G)
+  49          #define SEG_N5 ~(SEG_A|SEG_C|SEG_D|SEG_F|SEG_G)
+  50          #define SEG_N6 ~(SEG_A|SEG_C|SEG_D|SEG_E|SEG_F|SEG_G)
+  51          #define SEG_N7 ~(SEG_A|SEG_B|SEG_C)
+  52          #define SEG_N8 ~(SEG_A|SEG_B|SEG_C|SEG_D|SEG_E|SEG_F|SEG_G)
+C51 COMPILER V9.60.0.0   MAIN                                                              02/11/2020 01:09:48 PAGE 2   
 
-  53   3                              LED1 = 0;                     // Else, turn it off
-  54   3                              var10=1;
-  55   3                      }
-  56   2      
-  57   2                      if (SW2 == 0)                    // If switch depressed
-  58   2                      {
-  59   3                              LED2 = 1;                     // Turn on LED
-  60   3                      }
-  61   2                      else
-  62   2                      {
-  63   3                              LED2 = 0;                     // Else, turn it off
-  64   3                      }
-  65   2              }                                   // end of while(1)
-  66   1      }
-  67          
-  68          
-  69          
+  53          #define SEG_N9 ~(SEG_A|SEG_B|SEG_C|SEG_F|SEG_G)
+  54          #define SEG_NA ~(SEG_A|SEG_B|SEG_C|SEG_E|SEG_F|SEG_G)
+  55          #define SEG_NB ~(SEG_C|SEG_D|SEG_E|SEG_F|SEG_G)
+  56          #define SEG_NC ~(SEG_A|SEG_D|SEG_E|SEG_F)
+  57          #define SEG_ND ~(SEG_B|SEG_C|SEG_D|SEG_E|SEG_G)
+  58          #define SEG_NE ~(SEG_A|SEG_D|SEG_E|SEG_F|SEG_G)
+  59          #define SEG_NF ~(SEG_A|SEG_E|SEG_F|SEG_G)
+  60          
+  61          const unsigned char codificacion[10]=
+  62          {
+  63           SEG_N0,SEG_N1,SEG_N2,SEG_N3,SEG_N4,SEG_N5,SEG_N6,SEG_N7,
+  64           SEG_N8,SEG_N9//,SEG_NA,SEG_NB,SEG_NC,SEG_ND,SEG_NE,SEG_NF
+  65          };
+  66          
+  67          const unsigned char comunes[4]=
+  68          {
+  69           CE0,CE1,CE2,CE3
+  70          };
+  71          
+  72          
+  73          sbit SW1  =  P2^0;                     // SW1 ='0' means switch pressed
+  74          sbit SW2  =  P2^1;                     // SW2 ='0' means switch pressed
+  75          sbit LED1 =  P2^2;                     // LED1 ='1' means ON
+  76          sbit LED2 =  P2^3;                     // LED2 ='1' means ON
+  77          
+  78          
+  79          bdata unsigned char  variable1[3];
+  80          
+  81          sbit var10= variable1[0]^0;
+  82          data unsigned char  variable2;
+  83          idata unsigned char  variable3;
+  84          pdata unsigned char  variable4;
+  85          
+  86          void main (void)
+  87          {
+  88   1              unsigned short numero=0; //variable ue sirve para obtenel el nibble apropiado
+  89   1              unsigned short mean=0;
+  90   1              unsigned char cont=0;
+  91   1              unsigned char i=0; //variable para el ciclo de obtencion de los 4 valores
+  92   1              unsigned short j=0; //variable del retardo intermedio entre los display
+  93   1              unsigned short aux=0; //variable para guardar los nibbles restantes
+  94   1      
+  95   1              PCA0MD &= ~0x40;                // WDTE = 0 (clear watchdog timer enable)
+  96   1              PFE0CN |=0x20;                  //Enable Pre-fetch
+  97   1              FLSCL|=0x10;                    //increase wait state
+  98   1      
+  99   1      
+ 100   1              Oscillator_vInit(Oscillator_enSYSCLKSourceMult4);// Initialize Oscillator
+ 101   1              GPIO_vInit(); // Initialize Port I/O
+ 102   1              ADC0_vInit();
+ 103   1      
+ 104   1              while (1)
+ 105   1              {
+ 106   2                      numero=ADC0_vSample();
+ 107   2                      mean+=numero;
+ 108   2                      if(cont >=32)
+ 109   2                      {
+ 110   3                              mean/=32;
+ 111   3      
+ 112   3      
+ 113   3                              if ((unsigned short)mean < 0x200)                    // If switch depressed
+ 114   3                              {
+ 115   4                                      LED1 = 1;                     // Turn on LED
+C51 COMPILER V9.60.0.0   MAIN                                                              02/11/2020 01:09:48 PAGE 3   
+
+ 116   4                                      var10=0;
+ 117   4      
+ 118   4                              }
+ 119   3                              else
+ 120   3                              {
+ 121   4                                      LED1 = 0;                     // Else, turn it off
+ 122   4                                      var10=1;
+ 123   4                              }
+ 124   3                              aux=numero;
+ 125   3                              for(i=0;i<4;i++) //ciclo necesario para imprimir a los 4 display
+ 126   3                              {
+ 127   4                                      for(j=0;j<8000;j++);//retardo necesario para evitar interferencia entre dsplay
+ 128   4                                      PCE&=~0xF0;
+ 129   4                                      aux=mean%10;
+ 130   4                                      PSEG=codificacion[aux];//manda la codificacion del numero
+ 131   4                                      mean/=10; //obtiene el siguiente nibble de menor peso
+ 132   4      
+ 133   4                                      PCE|=comunes[i];//selecciona cual Display se va a modificar o visualizar
+ 134   4                         }
+ 135   3                         mean=0;
+ 136   3                         cont=0;
+ 137   3                      }
+ 138   2      
+ 139   2                      if (SW2 == 0)                    // If switch depressed
+ 140   2                      {
+ 141   3                              LED2 = 1;                     // Turn on LED
+ 142   3                      }
+ 143   2                      else
+ 144   2                      {
+ 145   3                              LED2 = 0;                     // Else, turn it off
+ 146   3                      }
+ 147   2                      cont++;
+ 148   2              }                                   // end of while(1)
+ 149   1      }
+ 150          
+ 151          
+ 152          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     50    ----
+   CODE SIZE        =    272    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
-   PDATA SIZE       =      1    ----
+   PDATA SIZE       =     15      10
    DATA SIZE        =      4    ----
    IDATA SIZE       =      1    ----
    BIT SIZE         =   ----    ----

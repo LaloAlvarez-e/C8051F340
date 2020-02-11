@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   EXTI                                                              02/10/2020 00:57:44 PAGE 1   
+C51 COMPILER V9.60.0.0   EXTI                                                              02/11/2020 01:09:47 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE EXTI
@@ -63,7 +63,7 @@ line level    source
   50   1              IE1=0; //reset Flag for INT0
   51   1              P2^=0x8; //Toggle P2.3
   52   1      }
-C51 COMPILER V9.60.0.0   EXTI                                                              02/10/2020 00:57:44 PAGE 2   
+C51 COMPILER V9.60.0.0   EXTI                                                              02/11/2020 01:09:47 PAGE 2   
 
   53          
 

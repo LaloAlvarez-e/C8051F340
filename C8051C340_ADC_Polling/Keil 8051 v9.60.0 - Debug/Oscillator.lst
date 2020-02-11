@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   OSCILLATOR                                                        02/10/2020 00:57:44 PAGE 1   
+C51 COMPILER V9.60.0.0   OSCILLATOR                                                        02/11/2020 01:09:47 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE OSCILLATOR
@@ -63,7 +63,7 @@ line level    source
   50          {
   51   1              /* Enable Low Frequency Oscillator     */
   52   1      
-C51 COMPILER V9.60.0.0   OSCILLATOR                                                        02/10/2020 00:57:44 PAGE 2   
+C51 COMPILER V9.60.0.0   OSCILLATOR                                                        02/11/2020 01:09:47 PAGE 2   
 
   53   1              OSCLCN =0;                                                      //Disable Low frequency Oscillator functionality
   54   1              OSCLCN|=(unsigned char)nDiv;                                            ///divider 1
