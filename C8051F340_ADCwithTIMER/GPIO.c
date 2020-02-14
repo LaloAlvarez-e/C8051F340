@@ -24,7 +24,8 @@ void GPIO_vInit(void)
 	/*LED and Switches configured as Digital Input*/
 	P2MDIN|=(SWITCH1_PIN|SWITCH2_PIN|LED1_PIN|LED2_PIN);
 	P1MDIN=0xFF;
-	P0MDIN|=0xF0;
+	P0MDIN|=0x0F;
+	P3MDIN|=0x80;
 
 	/*Switches configured as Open Drain Output*/
 	P2MDOUT&=~(SWITCH1_PIN|SWITCH2_PIN);
@@ -32,26 +33,25 @@ void GPIO_vInit(void)
 	/*Switches configured as push-pull Output*/
 	P2MDOUT|=(LED1_PIN|LED2_PIN);
 	P1MDOUT=0xFF;
-	P0MDOUT|=0xF0;
+	P0MDOUT|=0x0F;
+	P3MDOUT|=0x80;
 
 	/*LED and Switches skipped from CrossBar*/
 	P2SKIP|=(SWITCH1_PIN|SWITCH2_PIN|LED1_PIN|LED2_PIN);
 	P1SKIP=0xFF;
-	P0SKIP|=0xF0;
+	P0SKIP|=0x0F;
+	P3SKIP|=0x80;
 
 
 	/*LED initial State as LOW value*/
 	P2&=~(LED1_PIN|LED2_PIN);
 	P1=0;
-	P0&=~0xF0;
+	P0&=~0x0F;
+	P3&=~0x80;
 
 	/*Switches configured as high impedance to avoid short circuits on inputs*/
 	P2|=(SWITCH1_PIN|SWITCH2_PIN);
 	sSwitch2LastValue = 1;
-
-
-	P0MDIN 	|=0x1;						//conf as Digital Input
-	P0MDOUT |=0x1;						//conf GPIO P0 as push-pull output
 
 
 	P2MDIN |=0x4;						//Conf P2.2 as Output, Push-Pull Initial LOW

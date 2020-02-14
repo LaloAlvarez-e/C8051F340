@@ -161,6 +161,8 @@ void TIMER0_vInit()
 
 INTERRUPT(TIMER0_ISR, INTERRUPT_TIMER0)
 {
+
+	P3^=0x80;
 	if(Timer0_OF>=10)
 	{
 		Timer0Refresh=1;
