@@ -1,0 +1,86 @@
+C51 COMPILER V9.60.0.0   EXTI                                                              02/16/2020 21:49:25 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE EXTI
+OBJECT MODULE PLACED IN .\EXTI.OBJ
+COMPILER INVOKED BY: Z:\home\vyldram\SimplicityStudio_v4\developer\toolchains\keil_8051\9.60\BIN\C51.exe /home/vyldram/G
+                    -it/C8051F340/C8051F340_EMIF/EXTI.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPE
+                    -ED) INTVECTOR(0X0000) INTPROMOTE INCDIR(/home/vyldram/Git/C8051F340/C8051F340_EMIF;/home/vyldram/SimplicityStudio_v4/dev
+                    -eloper/toolchains/keil_8051/9.60/INC/SiLABS/shared/si8051Base) REGFILE(C8051F340_EMIF.ORC) PRINT(.\EXTI.lst) COND PAGEWI
+                    -DTH(120) PAGELENGTH(65) OBJECT(.\EXTI.OBJ)
+
+line level    source
+
+   1          /*
+   2           * EXTI.c
+   3           *
+   4           *  Created on: 09/02/2020
+   5           *      Author: vyldram
+   6           */
+   7          
+   8          #include <EXTI.h>
+   9          
+  10          
+  11          void EXT0_vInit(void)
+  12          {
+  13   1              IT01CF&=~0xF;
+  14   1              IT01CF|=0x9; //external interrupt in P0.1, INT0 active high
+  15   1      
+  16   1              P0MDOUT&=~0x2; //P0.1 open-drain output
+  17   1              P0MDIN|=0x2; //P0.1 digital input
+  18   1              P0SKIP|=0x2; //P0.1 skip in crossbar
+  19   1              P0|= 0x2; //P0.1 to high impedance
+  20   1      
+  21   1              EX0=1; //enable External INT0
+  22   1              PX0=1; //high prioprity
+  23   1              IT0=1; //edge sensitive
+  24   1      }
+  25          
+  26          void EXT1_vInit(void)
+  27          {
+  28   1              IT01CF&=~0xF0;
+  29   1              IT01CF|=0xA0; //external interrupt in P0.2, INT1 active high
+  30   1      
+  31   1              P0MDOUT&=~0x4; //P0.2 open-drain output
+  32   1              P0MDIN|=0x4; //P0.2 digital input
+  33   1              P0SKIP|=0x4; //P0.2 skip in crossbar
+  34   1              P0|= 0x4; //P0.2 to high impedance
+  35   1      
+  36   1              EX1=1; //enable External INT0
+  37   1              PX1=1; //high prioprity
+  38   1              IT1=1; //edge sensitive
+  39   1      }
+  40          
+  41          
+  42          INTERRUPT(EXT0_ISR, INTERRUPT_INT0)
+  43          {
+  44   1              IE0=0; //reset Flag for INT0
+  45   1              P2^=0x4; //Toggle P2.2
+  46   1      }
+  47          
+  48          INTERRUPT(EXT1_ISR, INTERRUPT_INT1)
+  49          {
+  50   1              IE1=0; //reset Flag for INT0
+  51   1              P2^=0x8; //Toggle P2.3
+  52   1      }
+C51 COMPILER V9.60.0.0   EXTI                                                              02/16/2020 21:49:25 PAGE 2   
+
+  53          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     68    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

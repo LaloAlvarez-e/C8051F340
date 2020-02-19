@@ -1,0 +1,93 @@
+C51 COMPILER V9.60.0.0   EMIF                                                              02/17/2020 03:30:29 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE EMIF
+OBJECT MODULE PLACED IN .\EMIF.OBJ
+COMPILER INVOKED BY: Z:\home\vyldram\SimplicityStudio_v4\developer\toolchains\keil_8051\9.60\BIN\C51.exe /home/vyldram/G
+                    -it/C8051F340/C8051F340_EMIF/EMIF.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPE
+                    -ED) INTVECTOR(0X0000) INTPROMOTE INCDIR(/home/vyldram/Git/C8051F340/C8051F340_EMIF;/home/vyldram/SimplicityStudio_v4/dev
+                    -eloper/toolchains/keil_8051/9.60/INC/SiLABS/shared/si8051Base) REGFILE(C8051F340_EMIF.ORC) PRINT(.\EMIF.lst) COND PAGEWI
+                    -DTH(120) PAGELENGTH(65) OBJECT(.\EMIF.OBJ)
+
+line level    source
+
+   1          /*
+   2           * EMIF.c
+   3           *
+   4           *  Created on: 16/02/2020
+   5           *      Author: vyldram
+   6           */
+   7          
+   8          
+   9          #include "EMIF.h"
+  10          
+  11          void EMIF_vInit (void)
+  12          {
+  13   1              short i=0;
+  14   1      
+  15   1              /* External Memory Configuration
+  16   1               * USBFA: SRAM USB FIFO cannot be accessible
+  17   1               * EMD2: SRAM not multiplexed
+  18   1               * EMD0-1: Split mode without bank select
+  19   1               */
+  20   1              EMI0CF =(0x10)|(0x4);// 0x14;
+  21   1      
+  22   1              /* HM6264LP-70 from Hitachi has a 70ns of time access (aporx 14 MHz)
+  23   1               *
+  24   1               * Address setup time (read): minimum value is not determined but maximum value is 70ns (14Mhz)
+  25   1               * Address setup time (write): minimum value is 0 and maximum value is 70ns (14Mhz)
+  26   1               * tAA = 0 SYSCLK
+  27   1               * Write pulse width: 3 SYSCLK (62ns)
+  28   1               * Address hold tiome = 1SYSCLK
+  29   1               *
+  30   1               */
+  31   1              EMI0TC =(0x8)|(0x1);
+  32   1      
+  33   1      
+  34   1              /*
+  35   1               * EMIF control pins skip from Crossbar and configured as Output push-pull
+  36   1               * All other pins are confifred as push-pull
+  37   1               */
+  38   1      
+  39   1              P1MDIN|=0xC0; //P1.6 (RD) and P1.7 (WR) as Digital input
+  40   1              P2MDIN|=0x1F; // P2.0-P2.4 configured as Digital input (A8-A12)
+  41   1              P3MDIN=0xFF;  //P3 configured as Digital Input (A0-A7)
+  42   1              P4MDIN=0xFF;  //P4 configured as Digital Input (D0-D7)
+  43   1      
+  44   1              P1MDOUT|=0xC0; //P1.6 (RD) and P1.7 (WR) as Push-Pull Output
+  45   1              P2MDOUT|=0x1F; // P2.0-P2.4 configured as Push-Pull Output (A8-A12)
+  46   1              P3MDOUT=0xFF;  //P3 configured as Push-Pull Output (A0-A7)
+  47   1              P4MDOUT=0xFF;  //P4 configured as Push-Pull Output (D0-D7)
+  48   1      
+  49   1              P1SKIP|=0xC0; //P1.6 (RD) and P1.7 (WR) are s kipped from crossbar
+  50   1      
+  51   1              P1|=0xC0; //P1.6 (RD) and P1.7 (WR) as High Output
+  52   1              P2|=0x1F; // P2.0-P2.4 as High Output (A8-A12)
+C51 COMPILER V9.60.0.0   EMIF                                                              02/17/2020 03:30:29 PAGE 2   
+
+  53   1              P3=0xFF;  //P3 as High Output (A0-A7)
+  54   1              P4=0xFF;  //P4 as High Output (D0-D7)
+  55   1      
+  56   1              /*CrossBar enable*/
+  57   1              XBR1|=0x40;
+  58   1              //retardo para estabilizar la configuracion
+  59   1              for (i=0; i<30000; i++);
+  60   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     63    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
