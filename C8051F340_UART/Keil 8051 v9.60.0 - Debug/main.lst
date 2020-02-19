@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              02/13/2020 01:59:39 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              02/16/2020 21:12:40 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -28,193 +28,111 @@ line level    source
   15          #include <ADC0.h>
   16          #include <EXTI.h>
   17          #include <UART.h>
-  18          
-  19          INTERRUPT_PROTO(TIMER0_ISR, INTERRUPT_TIMER0);
-  20          
-  21          void TIMER0_vInit(void);
-  22          
-  23          //lugar del pin donde se encuentra cada segmento
-  24          #define SEG_A (1) //P1.0 = seg A
-  25          #define SEG_B (2) //P1.1 = seg B
-  26          #define SEG_C (4) //P1.2 = seg C
-  27          #define SEG_D (8) //P1.3 = seg D
-  28          #define SEG_E (0x10) //P1.4 = seg E
-  29          #define SEG_F (0x20) //P1.5 = seg F
-  30          #define SEG_G (0x40) //P1.6 = seg G
-  31          #define SEG_DP (0x80)//P1.7 = seg DP
-  32          
-  33          #define PSEG P1 //P1 segmentos
-  34          
-  35          #define CE0 (0x1) //P0.0 = Com0
-  36          #define CE1 (0x2) //P0.1 = Com1
-  37          #define CE2 (0x4) //P0.2 = Com2
-  38          #define CE3 (0x8) //P0.3 = Com3
-  39          
-  40          #define PCE P0 //P1 comunes
-  41          
-  42          
-  43          
-  44          //definciones para imprimir ADCnumbers en un display de Anodo Común
-  45          //para activar un led debemos poner el PIN correspondiente en 0
-  46          #define SEG_CL (0xFF) //apaga todos los LED del segmento
-  47          #define SEG_N0 ~(SEG_A|SEG_B|SEG_C|SEG_D|SEG_E|SEG_F)
-  48          #define SEG_N1 ~(SEG_B|SEG_C)
-  49          #define SEG_N2 ~(SEG_A|SEG_B|SEG_D|SEG_E|SEG_G)
-  50          #define SEG_N3 ~(SEG_A|SEG_B|SEG_C|SEG_D|SEG_G)
-  51          #define SEG_N4 ~(SEG_B|SEG_C|SEG_F|SEG_G)
-  52          #define SEG_N5 ~(SEG_A|SEG_C|SEG_D|SEG_F|SEG_G)
-C51 COMPILER V9.60.0.0   MAIN                                                              02/13/2020 01:59:39 PAGE 2   
+  18          #include <EMIF.h>
+*** WARNING C318 IN LINE 18 OF /home/vyldram/Git/C8051F340/C8051F340_UART/main.c: can't open file 'EMIF.h'
+  19          
+  20          INTERRUPT_PROTO(TIMER0_ISR, INTERRUPT_TIMER0);
+  21          
+  22          void TIMER0_vInit(void);
+  23          
+  24          unsigned char Timer0_Count=0;
+  25          unsigned char Timer0_OF=0;
+  26          unsigned char Timer0Refresh=1;
+  27          unsigned short display[4]={0,0,0,0};
+  28          
+  29          void main (void)
+  30          {
+  31   1              unsigned short ADCnumber=0; //variable que sirve para obtenel el nibble apropiado
+  32   1              unsigned short mean=0;
+  33   1              unsigned short value=0;
+  34   1              unsigned char cont=0;
+  35   1      
+  36   1              PCA0MD &= ~0x40;                // WDTE = 0 (clear watchdog timer enable)
+  37   1              PFE0CN |=0x20;                  //Enable Pre-fetch
+  38   1              FLSCL|=0x10;                    //increase wait state
+  39   1      
+  40   1      
+  41   1              Oscillator_vInit(Oscillator_enSYSCLKSourceMult4);// Initialize Oscillator
+  42   1              UART0_enInit(9600);
+  43   1              //GPIO_vInit(); // Initialize Port I/O
+  44   1              ADC0_vInit();
+  45   1              TIMER0_vInit();
+  46   1      
+  47   1              EA=1;
+  48   1              while (1)
+  49   1              {
+  50   2                      ADCnumber=ADC0_u16Sample();
+  51   2                      mean+=ADCnumber;
+C51 COMPILER V9.60.0.0   MAIN                                                              02/16/2020 21:12:40 PAGE 2   
 
-  53          #define SEG_N6 ~(SEG_A|SEG_C|SEG_D|SEG_E|SEG_F|SEG_G)
-  54          #define SEG_N7 ~(SEG_A|SEG_B|SEG_C)
-  55          #define SEG_N8 ~(SEG_A|SEG_B|SEG_C|SEG_D|SEG_E|SEG_F|SEG_G)
-  56          #define SEG_N9 ~(SEG_A|SEG_B|SEG_C|SEG_F|SEG_G)
-  57          #define SEG_NA ~(SEG_A|SEG_B|SEG_C|SEG_E|SEG_F|SEG_G)
-  58          #define SEG_NB ~(SEG_C|SEG_D|SEG_E|SEG_F|SEG_G)
-  59          #define SEG_NC ~(SEG_A|SEG_D|SEG_E|SEG_F)
-  60          #define SEG_ND ~(SEG_B|SEG_C|SEG_D|SEG_E|SEG_G)
-  61          #define SEG_NE ~(SEG_A|SEG_D|SEG_E|SEG_F|SEG_G)
-  62          #define SEG_NF ~(SEG_A|SEG_E|SEG_F|SEG_G)
-  63          
-  64          const unsigned char codificacion[10]=
-  65          {
-  66           SEG_N0,SEG_N1,SEG_N2,SEG_N3,SEG_N4,SEG_N5,SEG_N6,SEG_N7,
-  67           SEG_N8,SEG_N9
-  68          };
-  69          
-  70          const unsigned char comunes[4]=
-  71          {
-  72           CE0,CE1,CE2,CE3
-  73          };
-  74          
-  75          sbit LED1 =  P2^2;                     // LED1 ='1' means ON
-  76          sbit LED2 =  P2^3;                     // LED2 ='1' means ON
-  77          
-  78          unsigned char Timer0_Count=0;
-  79          unsigned char Timer0_OF=0;
-  80          unsigned char Timer0Refresh=1;
-  81          unsigned short display[4]={0,0,0,0};
-  82          
-  83          void main (void)
-  84          {
-  85   1              unsigned short ADCnumber=0; //variable ue sirve para obtenel el nibble apropiado
-  86   1              unsigned short mean=0;
-  87   1              unsigned short value=0;
-  88   1              unsigned char cont=0;
-  89   1      
-  90   1              PCA0MD &= ~0x40;                // WDTE = 0 (clear watchdog timer enable)
-  91   1              PFE0CN |=0x20;                  //Enable Pre-fetch
-  92   1              FLSCL|=0x10;                    //increase wait state
-  93   1      
-  94   1      
-  95   1              Oscillator_vInit(Oscillator_enSYSCLKSourceMult4);// Initialize Oscillator
-  96   1              UART0_vInit(9600);
-  97   1              GPIO_vInit(); // Initialize Port I/O
-  98   1              ADC0_vInit();
-  99   1              TIMER0_vInit();
- 100   1      
- 101   1              EA=1;
- 102   1              while (1)
- 103   1              {
- 104   2                      ADCnumber=ADC0_vSample();
- 105   2                      mean+=ADCnumber;
- 106   2                      if(cont >=32)
- 107   2                      {
- 108   3                              mean/=32;
- 109   3                              value=mean;
- 110   3                              display[0]=mean%10;
- 111   3                              mean/=10;
- 112   3                              display[1]=mean%10;
- 113   3                              mean/=10;
- 114   3                              display[2]=mean%10;
- 115   3                              mean/=10;
-C51 COMPILER V9.60.0.0   MAIN                                                              02/13/2020 01:59:39 PAGE 3   
-
- 116   3                              display[3]=mean%10;
- 117   3                              mean=0;
- 118   3                              cont=0;
- 119   3                              if ((unsigned short)value < 0x200)                    // If switch depressed
- 120   3                              {
- 121   4                                      LED1 = 1;                     // Turn on LED
- 122   4                                      UART0_vSend((unsigned char)'L');
- 123   4                                      UART0_vSend((unsigned char)'E');
- 124   4                                      UART0_vSend((unsigned char)'D');
- 125   4                                      UART0_vSend((unsigned char)' ');
- 126   4                                      UART0_vSend((unsigned char)'O');
- 127   4                                      UART0_vSend((unsigned char)'N');
- 128   4                                      UART0_vSend((unsigned char)' ');
- 129   4                                      UART0_vSend((unsigned char)' ');
- 130   4                              }
- 131   3                              else
- 132   3                              {
- 133   4                                      LED1 = 0;                     // Else, turn it off
- 134   4                                      UART0_vSend((unsigned char)'L');
- 135   4                                      UART0_vSend((unsigned char)'E');
- 136   4                                      UART0_vSend((unsigned char)'D');
- 137   4                                      UART0_vSend((unsigned char)' ');
- 138   4                                      UART0_vSend((unsigned char)'O');
- 139   4                                      UART0_vSend((unsigned char)'F');
- 140   4                                      UART0_vSend((unsigned char)'F');
- 141   4                                      UART0_vSend((unsigned char)' ');
- 142   4                              }
- 143   3      
- 144   3                              UART0_vSend(0x30+display[3]);
- 145   3                              UART0_vSend(0x30+display[2]);
- 146   3                              UART0_vSend(0x30+display[1]);
- 147   3                              UART0_vSend(0x30+display[0]);
- 148   3                              UART0_vSend((unsigned char)'\n');
- 149   3                              UART0_vSend((unsigned char)'\r');
- 150   3                      }
- 151   2      
- 152   2                      cont++;
- 153   2      
- 154   2      
- 155   2              }                                   // end of while(1)
- 156   1      }
- 157          
- 158          
- 159          
- 160          void TIMER0_vInit()
- 161          {
- 162   1              CKCON&=~0x3;
- 163   1              CKCON|=2;       //sysclk/48= 1MHz
- 164   1              CKCON&=~0x4; //clk = sysclk/div
- 165   1      
- 166   1              TMOD&=~0x3;
- 167   1              TMOD|=2; //TIM0 autoreload
- 168   1              TMOD&=~0x4; //TIM0 timer function
- 169   1              TMOD&=~0x8; //timer active without external pin
- 170   1              TH0=255-100; //100 count, 1M/100 = 10KHz= 100us , 0.1ms
- 171   1              TL0=255-100;
- 172   1              TCON&=~0x20; //clear TIM0 Overflow flag
- 173   1              ET0=1; //enable TIM0 interrupt
- 174   1              TCON|=0x10; //enable TIM0
- 175   1      }
- 176          
- 177          
- 178          
-C51 COMPILER V9.60.0.0   MAIN                                                              02/13/2020 01:59:39 PAGE 4   
-
- 179          INTERRUPT(TIMER0_ISR, INTERRUPT_TIMER0)
- 180          {
- 181   1      
- 182   1              P3^=0x80;
- 183   1              Timer0_Count++;
- 184   1              Timer0_Count&=0x3;
- 185   1              PCE&=~0x0F;
- 186   1              PSEG=codificacion[display[Timer0_Count]];//manda la codificacion del ADCnumber
- 187   1              PCE|=comunes[Timer0_Count];//selecciona cual Display se va a modificar o visualizar
- 188   1      
- 189   1      
- 190   1      }
+  52   2                      if(cont >=32)
+  53   2                      {
+  54   3                              mean/=32;
+  55   3                              value=mean;
+  56   3                              display[0]=mean%10;
+  57   3                              mean/=10;
+  58   3                              display[1]=mean%10;
+  59   3                              mean/=10;
+  60   3                              display[2]=mean%10;
+  61   3                              mean/=10;
+  62   3                              display[3]=mean%10;
+  63   3                              mean=0;
+  64   3                              cont=0;
+  65   3                              if ((unsigned short)value < 0x200)                    // If switch depressed
+  66   3                              {
+  67   4                                      UART0_u16Print((unsigned char*)"LED ON  ");
+  68   4                              }
+  69   3                              else
+  70   3                              {
+  71   4                                      UART0_u16Print((unsigned char*)"LED OFF ");
+  72   4                              }
+  73   3      
+  74   3                              UART0_vSend(0x30+display[3]);
+  75   3                              UART0_vSend(0x30+display[2]);
+  76   3                              UART0_vSend(0x30+display[1]);
+  77   3                              UART0_vSend(0x30+display[0]);
+  78   3                              UART0_u16Print((unsigned char*)"\n\r");
+  79   3                      }
+  80   2                      cont++;
+  81   2              }                                   // end of while(1)
+  82   1      }
+  83          
+  84          
+  85          
+  86          void TIMER0_vInit()
+  87          {
+  88   1              CKCON&=~0x3;
+  89   1              CKCON|=2;       //sysclk/48= 1MHz
+  90   1              CKCON&=~0x4; //clk = sysclk/div
+  91   1      
+  92   1              TMOD&=~0x3;
+  93   1              TMOD|=2; //TIM0 autoreload
+  94   1              TMOD&=~0x4; //TIM0 timer function
+  95   1              TMOD&=~0x8; //timer active without external pin
+  96   1              TH0=255-100; //100 count, 1M/100 = 10KHz= 100us , 0.1ms
+  97   1              TL0=255-100;
+  98   1              TCON&=~0x20; //clear TIM0 Overflow flag
+  99   1              ET0=1; //enable TIM0 interrupt
+ 100   1              TCON|=0x10; //enable TIM0
+ 101   1      }
+ 102          
+ 103          
+ 104          
+ 105          INTERRUPT(TIMER0_ISR, INTERRUPT_TIMER0)
+ 106          {
+ 107   1              Timer0_Count++;
+ 108   1              Timer0_Count&=0x3;
+ 109   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    424    ----
-   CONSTANT SIZE    =   ----    ----
+   CODE SIZE        =    313    ----
+   CONSTANT SIZE    =     21    ----
+C51 COMPILER V9.60.0.0   MAIN                                                              02/16/2020 21:12:40 PAGE 3   
+
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     25       7
+   DATA SIZE        =     11       7
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
    EDATA SIZE       =   ----    ----
@@ -224,4 +142,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

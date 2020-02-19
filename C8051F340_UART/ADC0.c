@@ -11,15 +11,16 @@
 void ADC0_vInit(void)
 {
 	REF0CN|=0x8; //VCC VREF
-	P3MDIN&=~0x1; //3.0 as analog input
-	P3SKIP|=0x1;  //skip 3.0 crossbar
-	AMX0P = 0x06; //3.0
+	P0MDIN&=~0x10; //0.4 as analog input
+	P0SKIP|=0x10;  //skip 0.4 crossbar
+	AMX0P = 0x12; //0.4
 	AMX0N = 0x1F; //GND
 	ADC0CF=0xB8; //maximum sample time and right-jistified
 	ADC0CN= 0xC0;
 }
 
-unsigned short ADC0_vSample(void)
+
+unsigned short ADC0_u16Sample(void)
 {
 	unsigned short u16Value =0x400;
 	ADC0CN|=0x10;

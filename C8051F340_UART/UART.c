@@ -19,7 +19,7 @@ volatile uint8_t* Uart0_pu8PutRx=&Uart0_u8RxBuffer[0];
 volatile uint8_t* Uart0_pu8GetRx=&Uart0_u8RxBuffer[0];
 int8_t  Uart0_s8RxCounter=0;
 
-UART0_nStatus UART0_vInit(unsigned long u32BaudRate)
+UART0_nStatus UART0_enInit(unsigned long u32BaudRate)
 {
     UART0_nStatus enStatus= UART0_enOK;
     TIMER1_nStatus enStatusTim= TIMER1_enOK;
@@ -48,7 +48,7 @@ UART0_nStatus UART0_vInit(unsigned long u32BaudRate)
 	/*CrossBar enable*/
 	XBR1|=0x40;
 
-	enStatusTim =TIMER1_vInit(u32BaudRate);
+	enStatusTim =TIMER1_enInit(u32BaudRate);
 	if(enStatusTim == TIMER1_enERROR)
 		return UART0_enERROR;
 
@@ -70,7 +70,21 @@ void UART0_vSend(unsigned char u8Value)
 	SCON0&=~0x2;
 }
 
-TIMER1_nStatus TIMER1_vInit(unsigned long u32BaudRate)
+unsigned short UART0_u16Print(unsigned char* pu8String)
+{
+	unsigned long u32Cont= (unsigned long)pu8String;
+	while(*pu8String != 0)
+	{
+		UART0_vSend(*pu8String);
+		pu8String++;
+	}
+	u32Cont=(unsigned long)pu8String-u32Cont;
+	return (unsigned short)u32Cont;
+}
+
+
+
+TIMER1_nStatus TIMER1_enInit(unsigned long u32BaudRate)
 {
 	float fCont=500000.0; //500Khz 1MHz/2
 	uint8_t u8Cont=0; //500Khz 1MHz/2

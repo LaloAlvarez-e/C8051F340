@@ -11,7 +11,7 @@
 #include <Cygnal\c8051F340.h>
 
 void ADC0_vInit(void);
-unsigned short ADC0_vSample(void);
+unsigned short ADC0_u16Sample(void);
 
 
 #endif /* ADC0_H_ */

@@ -29,9 +29,10 @@ typedef enum{
 
 INTERRUPT_PROTO(UART0_ISR, INTERRUPT_UART0);
 
-UART0_nStatus UART0_vInit(unsigned long u32BaudRate);
+UART0_nStatus UART0_enInit(unsigned long u32BaudRate);
 void UART0_vSend(unsigned char u8Value);
+unsigned short UART0_u16Print(unsigned char* pu8String);
 
-TIMER1_nStatus TIMER1_vInit(unsigned long u32BaudRate);
+TIMER1_nStatus TIMER1_enInit(unsigned long u32BaudRate);
 
 #endif /* UART_H_ */
