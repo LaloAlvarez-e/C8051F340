@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   GPIO                                                              02/16/2020 21:49:25 PAGE 1   
+C51 COMPILER V9.60.0.0   GPIO                                                              02/19/2020 02:05:07 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GPIO
@@ -63,7 +63,7 @@ line level    source
   50   1              P3&=~0x80;
   51   1      
   52   1              /*Switches configured as high impedance to avoid short circuits on inputs*/
-C51 COMPILER V9.60.0.0   GPIO                                                              02/16/2020 21:49:25 PAGE 2   
+C51 COMPILER V9.60.0.0   GPIO                                                              02/19/2020 02:05:07 PAGE 2   
 
   53   1              P2|=(SWITCH1_PIN|SWITCH2_PIN);
   54   1              sSwitch2LastValue = 1;

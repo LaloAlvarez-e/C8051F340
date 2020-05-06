@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   EMIF                                                              02/17/2020 03:30:29 PAGE 1   
+C51 COMPILER V9.60.0.0   EMIF                                                              02/19/2020 02:09:57 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE EMIF
@@ -41,7 +41,7 @@ line level    source
   28   1               * Address hold tiome = 1SYSCLK
   29   1               *
   30   1               */
-  31   1              EMI0TC =(0x8)|(0x1);
+  31   1              EMI0TC =(0xC)|(0x1);
   32   1      
   33   1      
   34   1              /*
@@ -63,7 +63,7 @@ line level    source
   50   1      
   51   1              P1|=0xC0; //P1.6 (RD) and P1.7 (WR) as High Output
   52   1              P2|=0x1F; // P2.0-P2.4 as High Output (A8-A12)
-C51 COMPILER V9.60.0.0   EMIF                                                              02/17/2020 03:30:29 PAGE 2   
+C51 COMPILER V9.60.0.0   EMIF                                                              02/19/2020 02:09:57 PAGE 2   
 
   53   1              P3=0xFF;  //P3 as High Output (A0-A7)
   54   1              P4=0xFF;  //P4 as High Output (D0-D7)

@@ -28,7 +28,7 @@ void EMIF_vInit (void)
    	 * Address hold tiome = 1SYSCLK
    	 *
    	 */
-   	EMI0TC =(0x8)|(0x1);
+   	EMI0TC =(0xC)|(0x1);
 
 
    	/*

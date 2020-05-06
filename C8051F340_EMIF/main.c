@@ -10,6 +10,8 @@
 #include <SiLABS\shared\si8051Base\si_toolchain.h>
 #include <INTRINS.H>
 
+#include <CONV.h>
+
 #include <Oscillator.h>
 #include <GPIO.h>
 #include <ADC0.h>
@@ -45,7 +47,6 @@ void main (void)
 	EMIF_vInit();
 	Oscillator_vInit(Oscillator_enSYSCLKSourceMult4);// Initialize Oscillator
 	UART0_enInit(115200);
-	//GPIO_vInit(); // Initialize Port I/O
 	ADC0_vInit();
 	TIMER0_vInit();
 
@@ -60,57 +61,21 @@ void main (void)
 	UART0_u16Print((unsigned char*)"Verify XRAM: \n\r");
 	for(value=0;(unsigned short)value<(unsigned short)0x1000;value++)
 	{
-		mean=(uint16_t)&pu16ExternalRam2[value];
-		display[0]=mean%10;
-		mean/=10;
-		display[1]=mean%10;
-		mean/=10;
-		display[2]=mean%10;
-		mean/=10;
-		display[3]=mean%10;
-		mean/=10;
-		display[4]=mean%10;
 		UART0_u16Print((unsigned char*)"Direccion: ");
-		UART0_vSend(0x30+display[4]);
-		UART0_vSend(0x30+display[3]);
-		UART0_vSend(0x30+display[2]);
-		UART0_vSend(0x30+display[1]);
-		UART0_vSend(0x30+display[0]);
-		UART0_u16Print((unsigned char*)" Valor expected: ");
-		mean=value;
-		display[0]=mean%10;
-		mean/=10;
-		display[1]=mean%10;
-		mean/=10;
-		display[2]=mean%10;
-		mean/=10;
-		display[3]=mean%10;
-		mean/=10;
-		display[4]=mean%10;
-		UART0_vSend(0x30+display[4]);
-		UART0_vSend(0x30+display[3]);
-		UART0_vSend(0x30+display[2]);
-		UART0_vSend(0x30+display[1]);
-		UART0_vSend(0x30+display[0]);
-		UART0_u16Print((unsigned char*)" Valor real: ");
-		mean=pu16ExternalRam2[value];
-		display[0]=mean%10;
-		mean/=10;
-		display[1]=mean%10;
-		mean/=10;
-		display[2]=mean%10;
-		mean/=10;
-		display[3]=mean%10;
-		mean/=10;
-		display[4]=mean%10;
-		UART0_vSend(0x30+display[4]);
-		UART0_vSend(0x30+display[3]);
-		UART0_vSend(0x30+display[2]);
-		UART0_vSend(0x30+display[1]);
-		UART0_vSend(0x30+display[0]);
+		CONV__u8HexToString((unsigned short)&pu16ExternalRam2[value],(char*)display);
+		UART0_u16Print((unsigned char*)display);
+		UART0_u16Print((unsigned char*)"   \n\rValor: ");
+		CONV__u8HexToString((unsigned long)value,(char*)display);
+		UART0_u16Print((unsigned char*)display);
+		UART0_u16Print((unsigned char*)"=(?) ");
+		CONV__u8HexToString((unsigned long)pu16ExternalRam2[value],(char*)display);
+		UART0_u16Print((unsigned char*)display);
+
 		if(pu16ExternalRam2[value]!=value)
+		{
 			UART0_u16Print((unsigned char*)" Error");
-		UART0_u16Print((unsigned char*)"\n\r");
+		}
+		UART0_u16Print((unsigned char*)"\n\r\n\r");
 	}
 	while (1)
 	{
@@ -120,13 +85,6 @@ void main (void)
 		{
 			mean/=32;
 			value=mean;
-			display[0]=mean%10;
-			mean/=10;
-			display[1]=mean%10;
-			mean/=10;
-			display[2]=mean%10;
-			mean/=10;
-			display[3]=mean%10;
 			mean=0;
 			cont=0;
 			if ((unsigned short)value < 0x200)                    // If switch depressed
@@ -137,17 +95,11 @@ void main (void)
 			{
 				UART0_u16Print((unsigned char*)"LED OFF ");
 			}
-
-			UART0_vSend(0x30+display[3]);
-			UART0_vSend(0x30+display[2]);
-			UART0_vSend(0x30+display[1]);
-			UART0_vSend(0x30+display[0]);
+			CONV__u8UIntToString((unsigned long)value,(char*)display);
+			UART0_u16Print((unsigned char*)display);
 			UART0_u16Print((unsigned char*)"\n\r");
 		}
-
 		cont++;
-
-
 	}                                   // end of while(1)
 }
 

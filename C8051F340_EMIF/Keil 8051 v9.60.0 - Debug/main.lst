@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              02/17/2020 03:24:43 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              02/19/2020 02:19:24 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -23,184 +23,134 @@ line level    source
   10          #include <SiLABS\shared\si8051Base\si_toolchain.h>
   11          #include <INTRINS.H>
   12          
-  13          #include <Oscillator.h>
-  14          #include <GPIO.h>
-  15          #include <ADC0.h>
-  16          #include <EXTI.h>
-  17          #include <UART.h>
-  18          #include <EMIF.h>
-  19          
-  20          INTERRUPT_PROTO(TIMER0_ISR, INTERRUPT_TIMER0);
+  13          #include <CONV.h>
+  14          
+  15          #include <Oscillator.h>
+  16          #include <GPIO.h>
+  17          #include <ADC0.h>
+  18          #include <EXTI.h>
+  19          #include <UART.h>
+  20          #include <EMIF.h>
   21          
-  22          void TIMER0_vInit(void);
+  22          INTERRUPT_PROTO(TIMER0_ISR, INTERRUPT_TIMER0);
   23          
-  24          unsigned char Timer0_Count=0;
-  25          unsigned char Timer0_OF=0;
-  26          unsigned char Timer0Refresh=1;
-  27          unsigned short display[5]={0,0,0,0,0};
-  28          
-  29          xdata unsigned char pu8ExternalRam[1000] _at_ 0x8;
-  30          xdata unsigned char pu8ExternalRam1[1000] _at_ 0x800;
-  31          xdata unsigned short pu16ExternalRam2[0x1000] _at_ 0x1000;
-  32          
-  33          void main (void)
-  34          {
-  35   1              unsigned short ADCnumber=0; //variable que sirve para obtenel el nibble apropiado
-  36   1              unsigned short mean=0;
-  37   1              unsigned short value=0;
-  38   1              unsigned char cont=0;
-  39   1      
-  40   1              PCA0MD &= ~0x40;                // WDTE = 0 (clear watchdog timer enable)
-  41   1              PFE0CN |=0x20;                  //Enable Pre-fetch
-  42   1              FLSCL|=0x10;                    //increase wait state
-  43   1      
-  44   1      
-  45   1              EMIF_vInit();
-  46   1              Oscillator_vInit(Oscillator_enSYSCLKSourceMult4);// Initialize Oscillator
-  47   1              UART0_enInit(115200);
-  48   1              //GPIO_vInit(); // Initialize Port I/O
-  49   1              ADC0_vInit();
-  50   1              TIMER0_vInit();
-  51   1      
-  52   1              EA=1;
-C51 COMPILER V9.60.0.0   MAIN                                                              02/17/2020 03:24:43 PAGE 2   
+  24          void TIMER0_vInit(void);
+  25          
+  26          unsigned char Timer0_Count=0;
+  27          unsigned char Timer0_OF=0;
+  28          unsigned char Timer0Refresh=1;
+  29          unsigned short display[5]={0,0,0,0,0};
+  30          
+  31          xdata unsigned char pu8ExternalRam[1000] _at_ 0x8;
+  32          xdata unsigned char pu8ExternalRam1[1000] _at_ 0x800;
+  33          xdata unsigned short pu16ExternalRam2[0x1000] _at_ 0x1000;
+  34          
+  35          void main (void)
+  36          {
+  37   1              unsigned short ADCnumber=0; //variable que sirve para obtenel el nibble apropiado
+  38   1              unsigned short mean=0;
+  39   1              unsigned short value=0;
+  40   1              unsigned char cont=0;
+  41   1      
+  42   1              PCA0MD &= ~0x40;                // WDTE = 0 (clear watchdog timer enable)
+  43   1              PFE0CN |=0x20;                  //Enable Pre-fetch
+  44   1              FLSCL|=0x10;                    //increase wait state
+  45   1      
+  46   1      
+  47   1              EMIF_vInit();
+  48   1              Oscillator_vInit(Oscillator_enSYSCLKSourceMult4);// Initialize Oscillator
+  49   1              UART0_enInit(115200);
+  50   1              ADC0_vInit();
+  51   1              TIMER0_vInit();
+  52   1      
+C51 COMPILER V9.60.0.0   MAIN                                                              02/19/2020 02:19:24 PAGE 2   
 
-  53   1      
-  54   1              UART0_u16Print((unsigned char*)"Fill XRAM off chip: \n\r");
-  55   1              for(value=0;(unsigned short)value<(unsigned short)0x1000;value++)
-  56   1              {
-  57   2                      pu16ExternalRam2[value]=value;
-  58   2              }
-  59   1      
-  60   1              UART0_u16Print((unsigned char*)"Verify XRAM: \n\r");
-  61   1              for(value=0;(unsigned short)value<(unsigned short)0x1000;value++)
-  62   1              {
-  63   2                      mean=(uint16_t)&pu16ExternalRam2[value];
-  64   2                      display[0]=mean%10;
-  65   2                      mean/=10;
-  66   2                      display[1]=mean%10;
-  67   2                      mean/=10;
-  68   2                      display[2]=mean%10;
-  69   2                      mean/=10;
-  70   2                      display[3]=mean%10;
-  71   2                      mean/=10;
-  72   2                      display[4]=mean%10;
-  73   2                      UART0_u16Print((unsigned char*)"Direccion: ");
-  74   2                      UART0_vSend(0x30+display[4]);
-  75   2                      UART0_vSend(0x30+display[3]);
-  76   2                      UART0_vSend(0x30+display[2]);
-  77   2                      UART0_vSend(0x30+display[1]);
-  78   2                      UART0_vSend(0x30+display[0]);
-  79   2                      UART0_u16Print((unsigned char*)" Valor expected: ");
-  80   2                      mean=value;
-  81   2                      display[0]=mean%10;
-  82   2                      mean/=10;
-  83   2                      display[1]=mean%10;
-  84   2                      mean/=10;
-  85   2                      display[2]=mean%10;
-  86   2                      mean/=10;
-  87   2                      display[3]=mean%10;
-  88   2                      mean/=10;
-  89   2                      display[4]=mean%10;
-  90   2                      UART0_vSend(0x30+display[4]);
-  91   2                      UART0_vSend(0x30+display[3]);
-  92   2                      UART0_vSend(0x30+display[2]);
-  93   2                      UART0_vSend(0x30+display[1]);
-  94   2                      UART0_vSend(0x30+display[0]);
-  95   2                      UART0_u16Print((unsigned char*)" Valor real: ");
-  96   2                      mean=pu16ExternalRam2[value];
-  97   2                      display[0]=mean%10;
-  98   2                      mean/=10;
-  99   2                      display[1]=mean%10;
- 100   2                      mean/=10;
- 101   2                      display[2]=mean%10;
- 102   2                      mean/=10;
- 103   2                      display[3]=mean%10;
- 104   2                      mean/=10;
- 105   2                      display[4]=mean%10;
- 106   2                      UART0_vSend(0x30+display[4]);
- 107   2                      UART0_vSend(0x30+display[3]);
- 108   2                      UART0_vSend(0x30+display[2]);
- 109   2                      UART0_vSend(0x30+display[1]);
- 110   2                      UART0_vSend(0x30+display[0]);
- 111   2                      if(pu16ExternalRam2[value]!=value)
- 112   2                              UART0_u16Print((unsigned char*)" Error");
- 113   2                      UART0_u16Print((unsigned char*)"\n\r");
- 114   2              }
- 115   1              while (1)
-C51 COMPILER V9.60.0.0   MAIN                                                              02/17/2020 03:24:43 PAGE 3   
+  53   1              EA=1;
+  54   1      
+  55   1              UART0_u16Print((unsigned char*)"Fill XRAM off chip: \n\r");
+  56   1              for(value=0;(unsigned short)value<(unsigned short)0x1000;value++)
+  57   1              {
+  58   2                      pu16ExternalRam2[value]=value;
+  59   2              }
+  60   1      
+  61   1              UART0_u16Print((unsigned char*)"Verify XRAM: \n\r");
+  62   1              for(value=0;(unsigned short)value<(unsigned short)0x1000;value++)
+  63   1              {
+  64   2                      UART0_u16Print((unsigned char*)"Direccion: ");
+  65   2                      CONV__u8HexToString((unsigned short)&pu16ExternalRam2[value],(char*)display);
+  66   2                      UART0_u16Print((unsigned char*)display);
+  67   2                      UART0_u16Print((unsigned char*)"   \n\rValor: ");
+  68   2                      CONV__u8HexToString((unsigned long)value,(char*)display);
+  69   2                      UART0_u16Print((unsigned char*)display);
+  70   2                      UART0_u16Print((unsigned char*)"=(?) ");
+  71   2                      CONV__u8HexToString((unsigned long)pu16ExternalRam2[value],(char*)display);
+  72   2                      UART0_u16Print((unsigned char*)display);
+  73   2      
+  74   2                      if(pu16ExternalRam2[value]!=value)
+  75   2                      {
+  76   3                              UART0_u16Print((unsigned char*)" Error");
+  77   3                      }
+  78   2                      UART0_u16Print((unsigned char*)"\n\r\n\r");
+  79   2              }
+  80   1              while (1)
+  81   1              {
+  82   2                      ADCnumber=ADC0_u16Sample();
+  83   2                      mean+=ADCnumber;
+  84   2                      if(cont >=32)
+  85   2                      {
+  86   3                              mean/=32;
+  87   3                              value=mean;
+  88   3                              mean=0;
+  89   3                              cont=0;
+  90   3                              if ((unsigned short)value < 0x200)                    // If switch depressed
+  91   3                              {
+  92   4                                      UART0_u16Print((unsigned char*)"LED ON  ");
+  93   4                              }
+  94   3                              else
+  95   3                              {
+  96   4                                      UART0_u16Print((unsigned char*)"LED OFF ");
+  97   4                              }
+  98   3                              CONV__u8UIntToString((unsigned long)value,(char*)display);
+  99   3                              UART0_u16Print((unsigned char*)display);
+ 100   3                              UART0_u16Print((unsigned char*)"\n\r");
+ 101   3                      }
+ 102   2                      cont++;
+ 103   2              }                                   // end of while(1)
+ 104   1      }
+ 105          
+ 106          
+ 107          
+ 108          void TIMER0_vInit()
+ 109          {
+ 110   1              CKCON&=~0x3;
+ 111   1              CKCON|=2;       //sysclk/48= 1MHz
+ 112   1              CKCON&=~0x4; //clk = sysclk/div
+ 113   1      
+ 114   1              TMOD&=~0x3;
+ 115   1              TMOD|=2; //TIM0 autoreload
+C51 COMPILER V9.60.0.0   MAIN                                                              02/19/2020 02:19:24 PAGE 3   
 
- 116   1              {
- 117   2                      ADCnumber=ADC0_u16Sample();
- 118   2                      mean+=ADCnumber;
- 119   2                      if(cont >=32)
- 120   2                      {
- 121   3                              mean/=32;
- 122   3                              value=mean;
- 123   3                              display[0]=mean%10;
- 124   3                              mean/=10;
- 125   3                              display[1]=mean%10;
- 126   3                              mean/=10;
- 127   3                              display[2]=mean%10;
- 128   3                              mean/=10;
- 129   3                              display[3]=mean%10;
- 130   3                              mean=0;
- 131   3                              cont=0;
- 132   3                              if ((unsigned short)value < 0x200)                    // If switch depressed
- 133   3                              {
- 134   4                                      UART0_u16Print((unsigned char*)"LED ON  ");
- 135   4                              }
- 136   3                              else
- 137   3                              {
- 138   4                                      UART0_u16Print((unsigned char*)"LED OFF ");
- 139   4                              }
- 140   3      
- 141   3                              UART0_vSend(0x30+display[3]);
- 142   3                              UART0_vSend(0x30+display[2]);
- 143   3                              UART0_vSend(0x30+display[1]);
- 144   3                              UART0_vSend(0x30+display[0]);
- 145   3                              UART0_u16Print((unsigned char*)"\n\r");
- 146   3                      }
- 147   2      
- 148   2                      cont++;
- 149   2      
- 150   2      
- 151   2              }                                   // end of while(1)
- 152   1      }
- 153          
- 154          
- 155          
- 156          void TIMER0_vInit()
- 157          {
- 158   1              CKCON&=~0x3;
- 159   1              CKCON|=2;       //sysclk/48= 1MHz
- 160   1              CKCON&=~0x4; //clk = sysclk/div
- 161   1      
- 162   1              TMOD&=~0x3;
- 163   1              TMOD|=2; //TIM0 autoreload
- 164   1              TMOD&=~0x4; //TIM0 timer function
- 165   1              TMOD&=~0x8; //timer active without external pin
- 166   1              TH0=255-100; //100 count, 1M/100 = 10KHz= 100us , 0.1ms
- 167   1              TL0=255-100;
- 168   1              TCON&=~0x20; //clear TIM0 Overflow flag
- 169   1              ET0=1; //enable TIM0 interrupt
- 170   1              TCON|=0x10; //enable TIM0
- 171   1      }
- 172          
- 173          
- 174          
- 175          INTERRUPT(TIMER0_ISR, INTERRUPT_TIMER0)
- 176          {
- 177   1              Timer0_Count++;
- 178   1              Timer0_Count&=0x3;
-C51 COMPILER V9.60.0.0   MAIN                                                              02/17/2020 03:24:43 PAGE 4   
-
- 179   1      }
+ 116   1              TMOD&=~0x4; //TIM0 timer function
+ 117   1              TMOD&=~0x8; //timer active without external pin
+ 118   1              TH0=255-100; //100 count, 1M/100 = 10KHz= 100us , 0.1ms
+ 119   1              TL0=255-100;
+ 120   1              TCON&=~0x20; //clear TIM0 Overflow flag
+ 121   1              ET0=1; //enable TIM0 interrupt
+ 122   1              TCON|=0x10; //enable TIM0
+ 123   1      }
+ 124          
+ 125          
+ 126          
+ 127          INTERRUPT(TIMER0_ISR, INTERRUPT_TIMER0)
+ 128          {
+ 129   1              Timer0_Count++;
+ 130   1              Timer0_Count&=0x3;
+ 131   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1009    ----
-   CONSTANT SIZE    =    111    ----
+   CODE SIZE        =    487    ----
+   CONSTANT SIZE    =    103    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =     13       7

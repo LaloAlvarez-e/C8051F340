@@ -1,0 +1,209 @@
+C51 COMPILER V9.60.0.0   CONV                                                              02/19/2020 02:05:06 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE CONV
+OBJECT MODULE PLACED IN .\CONV.OBJ
+COMPILER INVOKED BY: Z:\home\vyldram\SimplicityStudio_v4\developer\toolchains\keil_8051\9.60\BIN\C51.exe /home/vyldram/G
+                    -it/C8051F340/C8051F340_EMIF/CONV.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPE
+                    -ED) INTVECTOR(0X0000) INTPROMOTE INCDIR(/home/vyldram/Git/C8051F340/C8051F340_EMIF;/home/vyldram/SimplicityStudio_v4/dev
+                    -eloper/toolchains/keil_8051/9.60/INC/SiLABS/shared/si8051Base) REGFILE(C8051F340_EMIF.ORC) PRINT(.\CONV.lst) COND PAGEWI
+                    -DTH(120) PAGELENGTH(65) OBJECT(.\CONV.OBJ)
+
+line level    source
+
+   1          /*
+   2           * CONV.c
+   3           *
+   4           *  Created on: 8 mar. 2018
+   5           *      Author: InDev
+   6           */
+   7          
+   8          #include "CONV.h"
+   9          
+  10          
+  11          uint8_t CONV__u8IntToString(long s64Number, char* pcConv)
+  12          {
+  13   1              xdata char      pcConvTemp[INT2STRINGMAX]={0}; //longitud maxima de long 12 digitos con signo
+  14   1              xdata char      *pcPointerActual = &pcConvTemp[INT2STRINGMAX-1]; //empezamos llenando desde la ultima posicio
+             -n;
+  15   1              xdata int32_t s32Num=0;
+  16   1              xdata int8_t    s8I=0;
+  17   1              xdata long s64NumberReg = s64Number;//paso el s32Numero a un registro para aumentar rendimiento
+  18   1              xdata int8_t    s8FlagSign=0;
+  19   1      
+  20   1          *pcPointerActual = 0; //guarda el fin de cadena en la ultima posicion
+  21   1          if( s64NumberReg < 0)
+  22   1          {
+  23   2              s64NumberReg*=-1;
+  24   2              s8FlagSign=1;
+  25   2          }
+  26   1      
+  27   1          do {
+  28   2              pcPointerActual--;//se decrementa la posicion donse guardara el valor
+  29   2              s32Num=s64NumberReg % 10; //obtiene el digito de menor peso
+  30   2              *pcPointerActual = s32Num  + '0'; //pcConvierte el valor en caracter
+  31   2              s64NumberReg /= 10;
+  32   2          }   while((s64NumberReg!=0)&&(pcPointerActual>(pcConvTemp+s8FlagSign))); //mientras exista un digito s
+             -igue el ciclo
+  33   1      
+  34   1          if (s8FlagSign==1)
+  35   1          {
+  36   2              pcPointerActual--;
+  37   2              *pcPointerActual = '-';//si el s32Numero es negativo guarda el signo negativo
+  38   2          }
+  39   1      
+  40   1          s64NumberReg=pcConvTemp+INT2STRINGMAX-1-pcPointerActual;//realiza la resta de cuantos caracteres se ut
+             -ilizaron
+  41   1          for (s8I = s64NumberReg; s8I>=0; s8I--) //hace un ciclo burbuja optimizado
+  42   1          {
+  43   2              ((char *)pcConv)[(uint8_t)s8I] = ((const char *)pcPointerActual)[(uint8_t)s8I];
+  44   2          }
+  45   1      
+  46   1          return s64NumberReg;
+  47   1      }
+  48          
+  49          
+C51 COMPILER V9.60.0.0   CONV                                                              02/19/2020 02:05:06 PAGE 2   
+
+  50          
+  51          uint8_t CONV__u8IntToStringCeros(long s64Number,int8_t s8CerosLeft, char* pcConv)
+  52          {
+  53   1              xdata char      pcConvTemp[INT2STRINGMAX]={0}; //longitud maxima de long 12 digitos con signo
+  54   1              xdata char      *pcPointerActual = &pcConvTemp[INT2STRINGMAX - 1]; //empezamos llenando desde la ultima posic
+             -ion
+  55   1              xdata int32_t s32Num=0;
+  56   1              xdata int8_t    s8I=0;
+  57   1              xdata long s64NumberReg = s64Number;//paso el s32Numero a un registro para aumentar rendimiento
+  58   1              xdata int8_t    s8FlagSign=0;
+  59   1      
+  60   1          if(s8CerosLeft>(INT2STRINGMAX-2))
+  61   1          {
+  62   2              s8CerosLeft=(INT2STRINGMAX-2);
+  63   2          }
+  64   1      
+  65   1          *pcPointerActual = 0; //guarda el fin de cadena en la ultima posicion
+  66   1          if( s64NumberReg < 0)
+  67   1          {
+  68   2              s64NumberReg*=-1;
+  69   2              s8FlagSign=1;
+  70   2          }
+  71   1      
+  72   1          do {
+  73   2              pcPointerActual--;//se decrementa la posicion donse guardara el valor
+  74   2              s32Num=s64NumberReg % 10; //obtiene el digito de menor peso
+  75   2              *pcPointerActual = s32Num  + '0'; //pcConvierte el valor en caracter
+  76   2              s8CerosLeft--;
+  77   2              s64NumberReg /= 10;
+  78   2          }  while((s64NumberReg!=0)&&(pcPointerActual>(pcConvTemp+s8FlagSign))); //mientras exista un digito si
+             -gue el ciclo
+  79   1      
+  80   1          while((pcPointerActual>(pcConvTemp+s8FlagSign)) && (s8CerosLeft>0))
+  81   1          {
+  82   2              pcPointerActual--;
+  83   2              *pcPointerActual ='0';
+  84   2              s8CerosLeft--;
+  85   2          }
+  86   1          if (s8FlagSign==1)
+  87   1          {
+  88   2              pcPointerActual--;
+  89   2              *pcPointerActual = '-';//si el s32Numero es negativo guarda el signo negativo
+  90   2          }
+  91   1          s64NumberReg=pcConvTemp+INT2STRINGMAX-1-pcPointerActual;//realiza la resta de cuantos caracteres se ut
+             -ilizaron
+  92   1          for (s8I = s64NumberReg; s8I>=0; s8I--) //hace un ciclo burbuja optimizado
+  93   1          {
+  94   2              ((char *)pcConv)[(uint8_t)s8I] = ((const char *)pcPointerActual)[(uint8_t)s8I];
+  95   2          }
+  96   1      
+  97   1          return s64NumberReg;
+  98   1      
+  99   1      }
+ 100          
+ 101          uint8_t CONV__u8UIntToString(unsigned long u64Number, char* pcConv)
+ 102          {
+ 103   1              xdata volatile char             pcConvTemp[INT2STRINGMAX]={0}; //longitud maxima de long 12 digitos con signo
+ 104   1              xdata volatile char             *pcPointerActual = &pcConvTemp[INT2STRINGMAX - 1]; //empezamos llenando desde la ul
+             -tima posicion
+ 105   1              xdata volatile int32_t  s32Num=0;
+ 106   1              xdata volatile int8_t           s8I=0;
+ 107   1              xdata volatile unsigned long    u64NumberReg = u64Number;//paso el s32Numero a un registro para aumentar re
+             -ndimiento
+C51 COMPILER V9.60.0.0   CONV                                                              02/19/2020 02:05:06 PAGE 3   
+
+ 108   1      
+ 109   1          *pcPointerActual = 0; //guarda el fin de cadena en la ultima posicion
+ 110   1          do {
+ 111   2              pcPointerActual--;//se decrementa la posicion donse guardara el valor
+ 112   2              s32Num=(unsigned long)u64NumberReg % (unsigned long)10ul; //obtiene el digito de menor peso
+ 113   2              *pcPointerActual = (uint8_t)s32Num  + '0'; //pcConvierte el valor en caracter
+ 114   2          }  while((u64NumberReg /= (unsigned long)10ul)); //mientras exista un digito sigue el ciclo
+ 115   1      
+ 116   1          u64NumberReg=pcConvTemp+INT2STRINGMAX-1-pcPointerActual;//realiza la resta de cuantos caracteres se ut
+             -ilizaron
+ 117   1          for (s8I = (int8_t)u64NumberReg; s8I>=0; s8I--) //hace un ciclo burbuja optimizado
+ 118   1          {
+ 119   2              ((char *)pcConv)[(uint8_t)s8I] = ((char *)pcPointerActual)[(uint8_t)s8I];
+ 120   2          }
+ 121   1      
+ 122   1          return u64NumberReg;
+ 123   1      }
+ 124          
+ 125          
+ 126          
+ 127          const int8_t ps8HEXA[16]=
+ 128          {
+ 129           '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
+ 130          };
+ 131          uint8_t CONV__u8HEXToString(unsigned long u64Number, char* pcConv)
+ 132          {
+ 133   1              xdata uint8_t  pcConvTemp[HEX2STRINGMAX]={0}; //longitud maxima de long 16 digitos
+ 134   1              xdata uint8_t  *pcPointerActual=&pcConvTemp[HEX2STRINGMAX - 1];
+ 135   1              xdata int32_t  s32Num=0;
+ 136   1              xdata int8_t   s8I=0;
+ 137   1              xdata unsigned long u64NumberReg = (unsigned long) u64Number;//paso el s32Numero a un registro para aumen
+             -tar rendimiento
+ 138   1      
+ 139   1          *pcPointerActual = 0; //guarda el fin de cadena en la ultima posicion
+ 140   1      
+ 141   1          do {
+ 142   2              pcPointerActual--;//se decrementa la posicion donse guardara el valor
+ 143   2              s32Num=u64NumberReg&0xF; //obtiene el digito de menor peso
+ 144   2              *pcPointerActual = ps8HEXA[(uint32_t)s32Num]; //convierte el valor en caracter
+ 145   2              u64NumberReg>>=4;
+ 146   2          }  while((u64NumberReg > 0)); //mientras exista un digito sigue el ciclo
+ 147   1      
+ 148   1          pcPointerActual--;
+ 149   1          *pcPointerActual = 'x';
+ 150   1          pcPointerActual--;
+ 151   1          *pcPointerActual = '0';
+ 152   1          u64NumberReg=pcConvTemp+HEX2STRINGMAX-1-pcPointerActual;//realiza la resta de cuantos caracteres se ut
+             -ilizaron
+ 153   1          for (s8I = u64NumberReg; s8I>=0 ; s8I--) //hace un ciclo burbuja optimizado
+ 154   1          {
+ 155   2              ((uint8_t *)pcConv)[(uint8_t)s8I] = ((const uint8_t *)pcPointerActual)[(uint8_t)s8I];
+ 156   2          }
+ 157   1      
+ 158   1          return u64NumberReg;
+ 159   1      }
+ 160          
+ 161          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1767    ----
+   CONSTANT SIZE    =     82    ----
+   XDATA SIZE       =   ----     132
+C51 COMPILER V9.60.0.0   CONV                                                              02/19/2020 02:05:06 PAGE 4   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     16      29
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
